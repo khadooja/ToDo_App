@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'ui/pages/home_page.dart';
 
 void main() {
-  runApp( const MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return GetMaterialApp(
+      theme: ThemeData(primaryColor: Colors.teal,
+        primarySwatch: Colors.teal,
+        
+      ),
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      home: const HomePage(),
     );
   }
 }
