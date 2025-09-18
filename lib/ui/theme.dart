@@ -13,7 +13,7 @@ const Color darkHeaderClr = Color(0xFF424242);
 class Themes {
   static final light = ThemeData(
     primaryColor: primaryClr,
-    scaffoldBackgroundColor: const Color.fromARGB(183, 78, 91, 232),
+    scaffoldBackgroundColor: Colors.white,
     brightness: Brightness.light,
   );
   static final dark = ThemeData(
@@ -22,7 +22,9 @@ class Themes {
     brightness: Brightness.dark,
   );
 
-  TextStyle get headingStyle {
+
+
+}  TextStyle get headingStyle {
     return GoogleFonts.lato(
       textStyle: TextStyle(
         fontSize: 24,
@@ -80,5 +82,6 @@ class Themes {
         color: Get.isDarkMode ? Colors.grey[200] : darkGreyClr,
       ),
     );
+
   }
-}
+
