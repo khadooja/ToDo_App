@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:ffi';
 
 import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:todo/controllers/task_controller.dart';
+import 'package:todo/services/notification_services.dart';
 import 'package:todo/services/theme_services.dart';
 
 import 'package:todo/ui/pages/add_task_page.dart';
@@ -22,6 +23,23 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+late NotifyHelper notifyHelper;
+
+@override
+void initState() {
+  super.initState();
+  notifyHelper = NotifyHelper();
+  
+  // استدعاء الدوال غير المتزامنة بطريقة صحيحة
+  initializeNotifications();
+}
+
+Future<void> initializeNotifications() async {
+  await notifyHelper.initializeNotifications();
+  notifyHelper.requestIOSPermissions();
+}
+
+
   DateTime _selectedDate = DateTime.now();
   final TaskController _taskController = Get.put(TaskController());
   @override
@@ -48,6 +66,11 @@ class _HomePageState extends State<HomePage> {
       leading: IconButton(
         onPressed: () {
           ThemeServices().switchTheme;
+
+          NotifyHelper().displayNotification(
+              title: "Theme Changed",
+              body: Get.isDarkMode ? "Light Mode" : "Dark Mode");
+          NotifyHelper().scheduledNotification();
         },
         icon: Icon(
           Get.isDarkMode
