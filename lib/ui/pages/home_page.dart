@@ -1,19 +1,22 @@
-import 'dart:ffi';
+import 'dart:js_interop';
 
 import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:todo/controllers/task_controller.dart';
+import 'package:todo/models/task.dart';
 import 'package:todo/services/notification_services.dart';
 import 'package:todo/services/theme_services.dart';
 
-import 'package:todo/ui/pages/add_task_page.dart';
-import 'package:todo/ui/size_config.dart';
-import 'package:todo/ui/theme.dart';
-import 'package:todo/ui/widgets/button.dart';
+import 'add_task_page.dart';
+import '../size_config.dart';
+import '../theme.dart';
+import '../widgets/button.dart';
+import '../widgets/task_tile.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -23,22 +26,21 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-late NotifyHelper notifyHelper;
+  late NotifyHelper notifyHelper;
 
-@override
-void initState() {
-  super.initState();
-  notifyHelper = NotifyHelper();
-  
-  // استدعاء الدوال غير المتزامنة بطريقة صحيحة
-  initializeNotifications();
-}
+  @override
+  void initState() {
+    super.initState();
+    notifyHelper = NotifyHelper();
 
-Future<void> initializeNotifications() async {
-  await notifyHelper.initializeNotifications();
-  notifyHelper.requestIOSPermissions();
-}
+    // استدعاء الدوال غير المتزامنة بطريقة صحيحة
+    initializeNotifications();
+  }
 
+  Future<void> initializeNotifications() async {
+    await notifyHelper.initializeNotification();
+    notifyHelper.requestIOSPermissions();
+  }
 
   DateTime _selectedDate = DateTime.now();
   final TaskController _taskController = Get.put(TaskController());
@@ -66,11 +68,11 @@ Future<void> initializeNotifications() async {
       leading: IconButton(
         onPressed: () {
           ThemeServices().switchTheme;
-
-          NotifyHelper().displayNotification(
+          notifyHelper.displayNotification(
               title: "Theme Changed",
-              body: Get.isDarkMode ? "Light Mode" : "Dark Mode");
-          NotifyHelper().scheduledNotification();
+              body: Get.isDarkMode
+                  ? "Activated Light Theme"
+                  : "Activated Dark Theme");
         },
         icon: Icon(
           Get.isDarkMode
@@ -164,7 +166,66 @@ Future<void> initializeNotifications() async {
 
   _showTasks() {
     return Expanded(
-      child: Obx(
+      child: ListView.builder(
+        scrollDirection: SizeConfig.orientation == Orientation.landscape
+            ? Axis.horizontal
+            : Axis.vertical,
+        itemBuilder: (BuildContext context, int index) {
+          var task = _taskController.taskList[index];
+
+          var hour = int.parse(task.startTime.toString().split(":")[0]);
+          print(hour);
+          var minutes =
+              int.parse(task.startTime.toString().split(":")[1].split(" ")[0]);
+          print(minutes);
+
+          var date = DateFormat.jm().parse(task.startTime!);
+          var myTime = DateFormat("HH:mm").format(date);
+          notifyHelper.scheduledNotification(
+              int.parse(myTime.toString().split(":")[0]),
+              int.parse(myTime.toString().split(":")[1]),
+              task);
+          return AnimationConfiguration.staggeredList(
+            position: index,
+            duration: const Duration(milliseconds: 1375),
+            child: SlideAnimation(
+              horizontalOffset: 300,
+              child: FadeInAnimation(
+                duration: const Duration(milliseconds: 1500),
+                curve: Curves.fastLinearToSlowEaseIn,
+                child: GestureDetector(
+                  onTap: () => _showBottomSheet(context, task),
+                  child: TaskTile(task: task),
+                ),
+              ),
+            ),
+          );
+        },
+        itemCount: _taskController.taskList.length,
+      ),
+    );
+    /*return Expanded(
+      child: GestureDetector
+      (onTap: () => _showBottomSheet(context, Task(
+          title: 'title',
+          note: 'note',
+          startTime: '9:00 AM',
+          endTime: '10:00 AM',
+          color: 0,
+          isCompleted: 0,
+        )),
+        child: TaskTile(
+            task: Task(
+          title: 'title',
+          note: 'note',
+          startTime: '9:00 AM',
+          endTime: '10:00 AM',
+          color: 0,
+          isCompleted: 0,
+        )),
+      ),
+
+      /* Obx(
         () {
           if (_taskController.taskList.isNotEmpty) {
             return _noTaskMgs();
@@ -177,8 +238,8 @@ Future<void> initializeNotifications() async {
             );
           }
         },
-      ),
-    );
+      ),*/
+    );*/
   }
 
   _noTaskMgs() {
@@ -222,5 +283,105 @@ Future<void> initializeNotifications() async {
         )
       ],
     );
+  }
+
+  _buildBottomSheet({
+    required String label,
+    required Function() onTap,
+    required Color clr,
+    bool isClose = false,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        height: 55,
+        width: SizeConfig.screenWidth * 0.9,
+        decoration: BoxDecoration(
+          border: Border.all(
+            width: 2,
+            color: isClose == true
+                ? Get.isDarkMode
+                    ? Colors.grey[600]!
+                    : Colors.grey[300]!
+                : clr,
+          ),
+          borderRadius: BorderRadius.circular(20),
+          color: isClose == true
+              ? Get.isDarkMode
+                  ? Colors.grey[600]!
+                  : Colors.grey[300]!
+              : clr,
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style:
+                isClose ? titelStyle : titelStyle.copyWith(color: Colors.white),
+          ),
+        ),
+      ),
+    );
+  }
+
+  _showBottomSheet(BuildContext context, Task task) {
+    Get.bottomSheet(SingleChildScrollView(
+      child: Container(
+        padding: const EdgeInsets.only(top: 4),
+        width: SizeConfig.screenWidth,
+        height: (SizeConfig.orientation == Orientation.landscape)
+            ? (task.isCompleted == 1)
+                ? SizeConfig.screenHeight * 0.6
+                : SizeConfig.screenHeight * 0.8
+            : (task.isCompleted == 1)
+                ? SizeConfig.screenHeight * 0.30
+                : SizeConfig.screenHeight * 0.39,
+        color: Get.isDarkMode ? darkHeaderClr : Colors.white,
+        child: Column(
+          children: [
+            Flexible(
+              child: Container(
+                height: 6,
+                width: 120,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Get.isDarkMode ? Colors.grey[600] : Colors.grey[300],
+                ),
+              ),
+            ),
+            const Spacer(),
+            task.isCompleted == 1
+                ? Container()
+                : _buildBottomSheet(
+                    label: "Task Completed",
+                    onTap: () {
+                      //_taskController.markTaskCompleted(task.id!);
+                      Get.back();
+                    },
+                    clr: primaryClr),
+            _buildBottomSheet(
+              label: "Delete Task",
+              onTap: () {
+                // _taskController.delete(task);
+                Get.back();
+              },
+              clr: Colors.red,
+            ),
+            Divider(
+              color: Get.isDarkMode ? Colors.grey[600] : Colors.grey[300],
+            ),
+            _buildBottomSheet(
+              label: "Close",
+              onTap: () {
+                Get.back();
+              },
+              clr: Colors.white,
+              isClose: true,
+            ),
+            const Spacer(),
+          ],
+        ),
+      ),
+    ));
   }
 }

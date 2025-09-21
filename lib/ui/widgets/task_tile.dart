@@ -5,7 +5,7 @@ import '../size_config.dart';
 import '../theme.dart';
 
 class TaskTile extends StatelessWidget {
-  const TaskTile({Key? key, required this.task}) : super(key: key);
+  const TaskTile({Key? key, required this.task,}) : super(key: key);
 
   final Task task;
 
