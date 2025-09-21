@@ -12,10 +12,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await NotifyHelper().initializeNotification();
-
-  runApp(const MyApp());
   DBHelper.initDb();
-  GetStorage.init();
+  await GetStorage.init();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
