@@ -1,5 +1,3 @@
-import 'dart:js_interop';
-
 import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -32,6 +30,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     notifyHelper = NotifyHelper();
+    _taskController.getTasks();
 
     // استدعاء الدوال غير المتزامنة بطريقة صحيحة
     initializeNotifications();
@@ -164,82 +163,65 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Future<void> _onRefresh() async {
+    _taskController.getTasks();
+  }
+
   _showTasks() {
     return Expanded(
-      child: ListView.builder(
-        scrollDirection: SizeConfig.orientation == Orientation.landscape
-            ? Axis.horizontal
-            : Axis.vertical,
-        itemBuilder: (BuildContext context, int index) {
-          var task = _taskController.taskList[index];
+      child: Obx(() {
+        if (_taskController.taskList.isNotEmpty) {
+          return _noTaskMgs();
+        } else {
+          return RefreshIndicator(
+            color: primaryClr,
+            onRefresh: () => _onRefresh(),
+            child: ListView.builder(
+              scrollDirection: SizeConfig.orientation == Orientation.landscape
+                  ? Axis.horizontal
+                  : Axis.vertical,
+              itemBuilder: (BuildContext context, int index) {
+                var task = _taskController.taskList[index];
+                if (task.repeat == 'Daily' ||
+                    task.date == DateFormat.yMd().format(_selectedDate)) {
+                  var hour = int.parse(task.startTime.toString().split(":")[0]);
+                  print(hour);
+                  var minutes = int.parse(
+                      task.startTime.toString().split(":")[1].split(" ")[0]);
+                  print(minutes);
 
-          var hour = int.parse(task.startTime.toString().split(":")[0]);
-          print(hour);
-          var minutes =
-              int.parse(task.startTime.toString().split(":")[1].split(" ")[0]);
-          print(minutes);
-
-          var date = DateFormat.jm().parse(task.startTime!);
-          var myTime = DateFormat("HH:mm").format(date);
-          notifyHelper.scheduledNotification(
-              int.parse(myTime.toString().split(":")[0]),
-              int.parse(myTime.toString().split(":")[1]),
-              task);
-          return AnimationConfiguration.staggeredList(
-            position: index,
-            duration: const Duration(milliseconds: 1375),
-            child: SlideAnimation(
-              horizontalOffset: 300,
-              child: FadeInAnimation(
-                duration: const Duration(milliseconds: 1500),
-                curve: Curves.fastLinearToSlowEaseIn,
-                child: GestureDetector(
-                  onTap: () => _showBottomSheet(context, task),
-                  child: TaskTile(task: task),
-                ),
-              ),
+                  var date = DateFormat.jm().parse(task.startTime!);
+                  var myTime = DateFormat("HH:mm").format(date);
+                  notifyHelper.scheduledNotification(
+                      int.parse(myTime.toString().split(":")[0]),
+                      int.parse(myTime.toString().split(":")[1]),
+                      task);
+                  return AnimationConfiguration.staggeredList(
+                    position: index,
+                    duration: const Duration(milliseconds: 1375),
+                    child: SlideAnimation(
+                      horizontalOffset: 300,
+                      child: FadeInAnimation(
+                        duration: const Duration(milliseconds: 1500),
+                        curve: Curves.fastLinearToSlowEaseIn,
+                        child: GestureDetector(
+                          onTap: () => _showBottomSheet(context, task),
+                          child: TaskTile(task: task),
+                        ),
+                      ),
+                    ),
+                  );
+                } else {
+                  return Container();
+                }
+                
+              },
+              itemCount: _taskController.taskList.length,
             ),
           );
-        },
-        itemCount: _taskController.taskList.length,
-      ),
+        }
+      }),
     );
-    /*return Expanded(
-      child: GestureDetector
-      (onTap: () => _showBottomSheet(context, Task(
-          title: 'title',
-          note: 'note',
-          startTime: '9:00 AM',
-          endTime: '10:00 AM',
-          color: 0,
-          isCompleted: 0,
-        )),
-        child: TaskTile(
-            task: Task(
-          title: 'title',
-          note: 'note',
-          startTime: '9:00 AM',
-          endTime: '10:00 AM',
-          color: 0,
-          isCompleted: 0,
-        )),
-      ),
-
-      /* Obx(
-        () {
-          if (_taskController.taskList.isNotEmpty) {
-            return _noTaskMgs();
-          } else {
-            return const Center(
-              child: Text(
-                "No Tasks Yet!",
-                style: TextStyle(fontSize: 20),
-              ),
-            );
-          }
-        },
-      ),*/
-    );*/
   }
 
   _noTaskMgs() {
@@ -247,37 +229,41 @@ class _HomePageState extends State<HomePage> {
       children: [
         AnimatedPositioned(
           duration: const Duration(milliseconds: 2000),
-          child: SingleChildScrollView(
-            child: Wrap(
-              alignment: WrapAlignment.center,
-              direction: SizeConfig.orientation == Orientation.landscape
-                  ? Axis.horizontal
-                  : Axis.vertical,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                SizeConfig.orientation == Orientation.landscape
-                    ? const SizedBox(height: 6)
-                    : const SizedBox(height: 220),
-                SvgPicture.asset(
-                  "images/task.svg",
-                  height: 90,
-                  color: primaryClr.withOpacity(0.5),
-                  semanticsLabel: "Tasks",
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 30.0, vertical: 10.0),
-                  child: Text(
-                    " You don't have any tasks yet!\nTap on the + button to add a new task",
-                    style: subtitelStyle,
-                    //overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
+          child: RefreshIndicator(
+            color: primaryClr,
+            onRefresh: () => _onRefresh(),
+            child: SingleChildScrollView(
+              child: Wrap(
+                alignment: WrapAlignment.center,
+                direction: SizeConfig.orientation == Orientation.landscape
+                    ? Axis.horizontal
+                    : Axis.vertical,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  SizeConfig.orientation == Orientation.landscape
+                      ? const SizedBox(height: 6)
+                      : const SizedBox(height: 220),
+                  SvgPicture.asset(
+                    "images/task.svg",
+                    height: 90,
+                    color: primaryClr.withOpacity(0.5),
+                    semanticsLabel: "Tasks",
                   ),
-                ),
-                SizeConfig.orientation == Orientation.landscape
-                    ? const SizedBox(height: 120)
-                    : const SizedBox(height: 180),
-              ],
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30.0, vertical: 10.0),
+                    child: Text(
+                      " You don't have any tasks yet!\nTap on the + button to add a new task",
+                      style: subtitelStyle,
+                      //overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  SizeConfig.orientation == Orientation.landscape
+                      ? const SizedBox(height: 120)
+                      : const SizedBox(height: 180),
+                ],
+              ),
             ),
           ),
         )
@@ -355,14 +341,14 @@ class _HomePageState extends State<HomePage> {
                 : _buildBottomSheet(
                     label: "Task Completed",
                     onTap: () {
-                      //_taskController.markTaskCompleted(task.id!);
+                      _taskController.markTaskCompleted(task.id!);
                       Get.back();
                     },
                     clr: primaryClr),
             _buildBottomSheet(
               label: "Delete Task",
               onTap: () {
-                // _taskController.delete(task);
+                _taskController.delete(task);
                 Get.back();
               },
               clr: Colors.red,

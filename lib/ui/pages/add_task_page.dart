@@ -198,6 +198,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
       backgroundColor: context.theme.scaffoldBackgroundColor,
       leading: IconButton(
         onPressed: () {
+          
           Get.back();
         },
         icon: const Icon(
@@ -232,6 +233,8 @@ class _AddTaskPageState extends State<AddTaskPage> {
         repeat: _selectedRepeat,
       ),
     );
+    print('############### ID: $value ###############');
+
     //Get.back();
   }
 

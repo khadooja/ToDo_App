@@ -31,7 +31,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
               style: TextStyle(
                   color: Get.isDarkMode ? Colors.white : Colors.black)),
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+            icon: Icon(Icons.arrow_back_ios,
+                color: Get.isDarkMode ? Colors.white : Colors.black),
             onPressed: () => Get.back(),
           ),
         ),
