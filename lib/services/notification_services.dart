@@ -186,4 +186,8 @@ class NotifyHelper {
   void cancelNotification(Task task) async {
     await flutterLocalNotificationsPlugin.cancel(task.id!);
   }
+
+  void cancelAllNotification(Task task) async {
+    await flutterLocalNotificationsPlugin.cancelAll();
+  }
 }

@@ -84,9 +84,8 @@ class _HomePageState extends State<HomePage> {
       actions: [
         IconButton(
             onPressed: () {
+              notifyHelper.cancelAllNotification;
               _taskController.deleteAll(Task());
-              notifyHelper.displayNotification(
-                  title: "All Tasks Deleted", body: "You have no tasks");
               Get.snackbar("All Tasks Deleted", "You have no tasks",
                   snackPosition: SnackPosition.BOTTOM,
                   backgroundColor: Colors.white,
