@@ -198,7 +198,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
       backgroundColor: context.theme.scaffoldBackgroundColor,
       leading: IconButton(
         onPressed: () {
-          
+
           Get.back();
         },
         icon: const Icon(

@@ -81,12 +81,32 @@ class _HomePageState extends State<HomePage> {
           color: Get.isDarkMode ? Colors.white : darkGreyClr,
         ),
       ),
-      actions: const [
-        CircleAvatar(
+      actions: [
+        IconButton(
+            onPressed: () {
+              _taskController.deleteAll(Task());
+              notifyHelper.displayNotification(
+                  title: "All Tasks Deleted", body: "You have no tasks");
+              Get.snackbar("All Tasks Deleted", "You have no tasks",
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: Colors.white,
+                  colorText: primaryClr,
+                  icon: const Icon(
+                    Icons.notification_important,
+                    color: Colors.red,
+                  ));
+            },
+            icon: Icon(
+              Icons.cleaning_services_outlined,
+              size: 24,
+              color: Get.isDarkMode ? Colors.white : darkGreyClr,
+              // Disable the button (no action
+            )),
+        const CircleAvatar(
           backgroundImage: AssetImage('images/person.jpeg'),
           radius: 18,
         ),
-        SizedBox(
+        const SizedBox(
           width: 20,
         )
       ],
@@ -183,12 +203,27 @@ class _HomePageState extends State<HomePage> {
               itemBuilder: (BuildContext context, int index) {
                 var task = _taskController.taskList[index];
                 if (task.repeat == 'Daily' ||
-                    task.date == DateFormat.yMd().format(_selectedDate)) {
-                  var hour = int.parse(task.startTime.toString().split(":")[0]);
-                  print(hour);
-                  var minutes = int.parse(
-                      task.startTime.toString().split(":")[1].split(" ")[0]);
-                  print(minutes);
+                    task.date == DateFormat.yMd().format(_selectedDate) ||
+                    task.repeat == 'Yearly' &&
+                        DateFormat.yMd().parse(task.date!).day ==
+                            _selectedDate.day &&
+                        DateFormat.yMd().parse(task.date!).month ==
+                            _selectedDate.month ||
+                    task.repeat == 'Monthly' &&
+                        DateFormat.yMd().parse(task.date!).day ==
+                            _selectedDate.day ||
+                    task.repeat == 'Weekly' &&
+                        _selectedDate
+                                    .difference(
+                                        DateFormat.yMd().parse(task.date!))
+                                    .inDays %
+                                7 ==
+                            0) {
+                  //var hour = int.parse(task.startTime.toString().split(":")[0]);
+                  //print(hour);
+                  //var minutes = int.parse(
+                  // task.startTime.toString().split(":")[1].split(" ")[0]);
+                  // print(minutes);
 
                   var date = DateFormat.jm().parse(task.startTime!);
                   var myTime = DateFormat("HH:mm").format(date);
@@ -214,7 +249,6 @@ class _HomePageState extends State<HomePage> {
                 } else {
                   return Container();
                 }
-                
               },
               itemCount: _taskController.taskList.length,
             ),
@@ -341,6 +375,7 @@ class _HomePageState extends State<HomePage> {
                 : _buildBottomSheet(
                     label: "Task Completed",
                     onTap: () {
+                      notifyHelper.cancelNotification(task);
                       _taskController.markTaskCompleted(task.id!);
                       Get.back();
                     },
@@ -348,7 +383,9 @@ class _HomePageState extends State<HomePage> {
             _buildBottomSheet(
               label: "Delete Task",
               onTap: () {
+                notifyHelper.cancelNotification(task);
                 _taskController.delete(task);
+
                 Get.back();
               },
               clr: Colors.red,
