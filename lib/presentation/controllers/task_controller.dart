@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:todo/db/db_helper.dart';
-import 'package:todo/models/task.dart';
+import 'package:todo/data/db/db_helper.dart';
+import 'package:todo/data/models/task.dart';
 
 class TaskController extends GetxController {
   final taskList = [Task()].obs;

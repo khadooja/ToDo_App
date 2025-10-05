@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:todo/ThemeData/theme.dart';
-import 'package:todo/db/db_helper.dart';
-import 'package:todo/services/notification_services.dart';
-import 'package:todo/services/theme_services.dart';
-import 'package:todo/ui/pages/splash_page.dart';
+import 'package:todo/core/Theme/theme.dart';
+import 'package:todo/data/db/db_helper.dart';
+import 'package:todo/core/services/notification_services.dart';
+import 'package:todo/core/services/theme_services.dart';
+import 'package:todo/presentation/pages/splash_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:todo/ThemeData/text_styles.dart';
-import 'package:todo/controllers/task_controller.dart';
-import 'package:todo/models/task.dart';
-import 'package:todo/ThemeData/colors.dart';
-import 'package:todo/ui/widgets/button.dart';
-import 'package:todo/ui/widgets/input_field.dart';
+import 'package:todo/core/Theme/colors.dart';
+import 'package:todo/core/Theme/text_styles.dart';
+import 'package:todo/presentation/controllers/task_controller.dart';
+import 'package:todo/data/models/task.dart';
+import 'package:todo/presentation/widgets/button.dart';
+import 'package:todo/presentation/widgets/input_field.dart';
 
 class AddTaskPage extends StatefulWidget {
   const AddTaskPage({super.key});
@@ -35,7 +35,6 @@ class _AddTaskPageState extends State<AddTaskPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       resizeToAvoidBottomInset: true,
       backgroundColor: context.theme.scaffoldBackgroundColor,
       appBar: _appBar(),
@@ -188,8 +187,8 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Expanded(child: _colorePalete()), // <-- مهم
-                  const SizedBox(width: 10), // مسافة بسيطة
+                  Expanded(child: _colorePalete()), 
+                  const SizedBox(width: 10), 
                   MyButton(
                     label: "Create Task",
                     onTap: () {
@@ -206,37 +205,24 @@ class _AddTaskPageState extends State<AddTaskPage> {
   }
 
   AppBar _appBar() {
-  bool isDark = Get.isDarkMode;
-  return AppBar(
-    elevation: 0, // إزالة الظل
-    backgroundColor: context.theme.scaffoldBackgroundColor, // لون موحد
-    shadowColor: Colors.transparent, // إزالة أي ظل محتمل
-    surfaceTintColor: Colors.transparent, // مهم لبعض الإصدارات الجديدة
-    leading: IconButton(
-      onPressed: () {
-        Get.back();
-      },
-      icon: Icon(
-        Icons.arrow_back_ios,
-        size: 24,
-        color: isDark ? Colors.white : Colors.black87,
-      ),
-    ),
-    actions: [
-      CircleAvatar(
-        radius: 18,
-        backgroundColor: isDark ? Colors.grey[300] : Colors.grey[700],
-        child: Icon(
-          Icons.person,
-          color: isDark ? Colors.black87 : Colors.white,
-          size: 20,
+    bool isDark = Get.isDarkMode;
+    return AppBar(
+      elevation: 0, 
+      backgroundColor: context.theme.scaffoldBackgroundColor, 
+      shadowColor: Colors.transparent, 
+      surfaceTintColor: Colors.transparent, 
+      leading: IconButton(
+        onPressed: () {
+          Get.back();
+        },
+        icon: Icon(
+          Icons.arrow_back_ios,
+          size: 24,
+          color: isDark ? Colors.white : Colors.black87,
         ),
       ),
-      const SizedBox(width: 20),
-    ],
-  );
-}
-
+    );
+  }
 
   _addTaskToDb() async {
     int value = await _taskController.addTask(
@@ -271,7 +257,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
         icon: const Icon(Icons.warning_amber_rounded, color: Colors.red),
       );
     } else {
-      print('############### SOMETHING WENT WRONG ###############');
+        print('All fields are required !');
     }
   }
 

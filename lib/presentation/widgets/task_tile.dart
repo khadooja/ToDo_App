@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:todo/models/task.dart';
-import '../size_config.dart';
-import '../../ThemeData/colors.dart';
+import 'package:todo/data/models/task.dart';
+import '../../core/utils/size_config.dart';
+import '../../core/Theme/colors.dart';
 
 class TaskTile extends StatelessWidget {
   const TaskTile({super.key, required this.task,});

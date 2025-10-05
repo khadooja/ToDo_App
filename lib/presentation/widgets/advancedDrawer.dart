@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:todo/ThemeData/colors.dart';
-import 'package:todo/ThemeData/text_styles.dart';
-import 'package:todo/controllers/task_controller.dart';
-import 'package:todo/models/task.dart';
-import 'package:todo/services/notification_services.dart';
-import 'package:todo/services/theme_services.dart';
+import 'package:todo/core/Theme/colors.dart';
+import 'package:todo/core/Theme/text_styles.dart';
+import 'package:todo/presentation/controllers/task_controller.dart';
+import 'package:todo/data/models/task.dart';
+import 'package:todo/core/services/notification_services.dart';
+import 'package:todo/core/services/theme_services.dart';
 
 class AdvancedDrawer extends StatefulWidget {
   final NotifyHelper notifyHelper;

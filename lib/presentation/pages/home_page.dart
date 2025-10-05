@@ -4,14 +4,14 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:todo/ThemeData/text_styles.dart';
-import 'package:todo/controllers/task_controller.dart';
-import 'package:todo/models/task.dart';
-import 'package:todo/services/notification_services.dart';
-import 'package:todo/ui/widgets/advancedDrawer.dart';
+import 'package:todo/core/Theme/colors.dart' show darkHeaderClr, primaryClr;
+import 'package:todo/core/Theme/text_styles.dart';
+import 'package:todo/presentation/controllers/task_controller.dart';
+import 'package:todo/data/models/task.dart';
+import 'package:todo/core/services/notification_services.dart';
+import 'package:todo/presentation/widgets/advancedDrawer.dart';
 import 'add_task_page.dart';
-import '../size_config.dart';
-import '../../ThemeData/colors.dart';
+import '../../core/utils/size_config.dart';
 import '../widgets/button.dart';
 import '../widgets/task_tile.dart';
 
@@ -42,7 +42,6 @@ class _HomePageState extends State<HomePage> {
 
   DateTime _selectedDate = DateTime.now();
   final TaskController _taskController = Get.put(TaskController());
-  @override
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);

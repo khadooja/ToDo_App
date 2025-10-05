@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:todo/ThemeData/colors.dart';
+import 'package:todo/core/Theme/colors.dart';
+
 
 class NotificationScreen extends StatefulWidget {
-  const NotificationScreen({Key? key, required this.payload}) : super(key: key);
+  const NotificationScreen({super.key, required this.payload});
 
   final String payload;
 

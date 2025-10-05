@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:todo/ui/pages/home_page.dart';
-import 'package:todo/ui/pages/onboarding_page.dart';
+import 'package:todo/presentation/pages/home_page.dart';
+import 'package:todo/presentation/pages/onboarding_page.dart';
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:todo/ThemeData/colors.dart';
-import 'package:todo/ThemeData/text_styles.dart';
+import 'package:todo/core/Theme/colors.dart';
+import 'package:todo/core/Theme/text_styles.dart';
 
 class MyButton extends StatelessWidget {
   const MyButton({super.key, required this.label, required this.onTap});
