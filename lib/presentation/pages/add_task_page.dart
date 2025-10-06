@@ -9,7 +9,8 @@ import 'package:todo/presentation/widgets/button.dart';
 import 'package:todo/presentation/widgets/input_field.dart';
 
 class AddTaskPage extends StatefulWidget {
-  const AddTaskPage({super.key});
+  final Task? task; // nullable task
+  const AddTaskPage({super.key, this.task});
 
   @override
   State<AddTaskPage> createState() => _AddTaskPageState();
@@ -32,6 +33,22 @@ class _AddTaskPageState extends State<AddTaskPage> {
   String _selectedRepeat = 'None';
   List<String> repeatList = ['None', 'Daily', 'Weekly', 'Monthly'];
   int _selectedColor = 0;
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.task != null) {
+      _titleController.text = widget.task!.title ?? "";
+      _noteController.text = widget.task!.note ?? "";
+      _selectedDate = DateFormat.yMd().parse(widget.task!.date!);
+      _startTime = widget.task!.startTime!;
+      _endTime = widget.task!.endTime!;
+      _selectedRemind = widget.task!.remind!;
+      _selectedRepeat = widget.task!.repeat!;
+      _selectedColor = widget.task!.color!;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -187,12 +204,16 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Expanded(child: _colorePalete()), 
-                  const SizedBox(width: 10), 
+                  Expanded(child: _colorePalete()),
+                  const SizedBox(width: 10),
                   MyButton(
-                    label: "Create Task",
+                    label: widget.task == null ? "Create Task" : "Update Task",
                     onTap: () {
-                      _validateDate();
+                      if (widget.task == null) {
+                        _validateDate();
+                      } else {
+                        _updateTaskInDB();
+                      }
                     },
                   ),
                 ],
@@ -207,10 +228,10 @@ class _AddTaskPageState extends State<AddTaskPage> {
   AppBar _appBar() {
     bool isDark = Get.isDarkMode;
     return AppBar(
-      elevation: 0, 
-      backgroundColor: context.theme.scaffoldBackgroundColor, 
-      shadowColor: Colors.transparent, 
-      surfaceTintColor: Colors.transparent, 
+      elevation: 0,
+      backgroundColor: context.theme.scaffoldBackgroundColor,
+      shadowColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
       leading: IconButton(
         onPressed: () {
           Get.back();
@@ -257,7 +278,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
         icon: const Icon(Icons.warning_amber_rounded, color: Colors.red),
       );
     } else {
-        print('All fields are required !');
+      print('All fields are required !');
     }
   }
 
@@ -345,5 +366,23 @@ class _AddTaskPageState extends State<AddTaskPage> {
         }
       }
     });
+  }
+
+  _updateTaskInDB() async {
+    await _taskController.updateTask(
+      widget.task!.id!,
+      Task(
+        title: _titleController.text,
+        note: _noteController.text,
+        isCompleted: widget.task!.isCompleted,
+        date: DateFormat.yMd().format(_selectedDate),
+        startTime: _startTime,
+        endTime: _endTime,
+        color: _selectedColor,
+        remind: _selectedRemind,
+        repeat: _selectedRepeat,
+      ),
+    );
+    Get.back();
   }
 }

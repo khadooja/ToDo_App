@@ -85,4 +85,14 @@ class DBHelper {
     WHERE id = ?
     ''', [1, id]);
   }
+  static Future<int> updateTask(int id, Task task) async {
+  final db = _db;
+  return await db!.update(
+    'tasks',
+    task.toJson(),
+    where: 'id = ?',
+    whereArgs: [id],
+  );
+}
+
 }

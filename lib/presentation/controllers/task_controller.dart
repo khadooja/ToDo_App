@@ -20,6 +20,11 @@ Future<int> addTask({Task? task}) async {
   return id; 
 }
 
+  Future<int> updateTask(int id, Task task) async {
+    int result = await DBHelper.updateTask(id, task);
+    getTasks();
+    return result;
+  }
 
   void delete(Task task) async {
     await DBHelper.delete(task);

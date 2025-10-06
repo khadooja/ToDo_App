@@ -395,8 +395,6 @@ class _HomePageState extends State<HomePage> {
               itemCount: _taskController.taskList.length,
               itemBuilder: (BuildContext context, int index) {
                 var task = _taskController.taskList[index];
-
-                // تحويل التاريخ بشكل آمن
                 DateTime? taskDate;
                 try {
                   taskDate =
@@ -463,7 +461,16 @@ class _HomePageState extends State<HomePage> {
                       duration: const Duration(milliseconds: 1500),
                       curve: Curves.fastLinearToSlowEaseIn,
                       child: GestureDetector(
-                        onTap: () => _showBottomSheet(context, task),
+                        onTap:
+                            () => _showBottomSheet(
+                              context,
+                              task,
+                            ), // نقرة واحدة: تفتح الخيارات
+                        onDoubleTap: () async {
+                          // نقرتين: تعديل مباشر
+                          await Get.to(() => AddTaskPage(task: task));
+                          _taskController.getTasks(); // تحديث بعد التعديل
+                        },
                         child: TaskTile(task: task),
                       ),
                     ),
@@ -597,6 +604,20 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               const Spacer(),
+              task.isCompleted == 1
+                  ? Container()
+                  : _buildBottomSheet(
+                    label: "Edit Task",
+                    onTap: () async {
+                      Get.back(); // يغلق الـ BottomSheet
+                      await Get.to(
+                        () => AddTaskPage(task: task),
+                      ); // فتح صفحة التعديل
+                      _taskController.getTasks(); // تحديث المهام بعد الرجوع
+                    },
+                    clr: Colors.orangeAccent,
+                  ),
+
               task.isCompleted == 1
                   ? Container()
                   : _buildBottomSheet(
