@@ -29,7 +29,14 @@ class _AdvancedDrawerState extends State<AdvancedDrawer> {
   @override
   void initState() {
     super.initState();
-    _notificationsEnabled = widget.notificationsEnabled;
+    _initNotificationState();
+  }
+
+  void _initNotificationState() async {
+    bool isAllowed = await widget.notifyHelper.checkNotificationPermission();
+    setState(() {
+      _notificationsEnabled = isAllowed;
+    });
   }
 
   @override
@@ -38,9 +45,10 @@ class _AdvancedDrawerState extends State<AdvancedDrawer> {
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: Get.isDarkMode
-                ? [Colors.grey[900]!, Colors.grey[850]!]
-                : [Colors.white, Colors.grey[100]!],
+            colors:
+                Get.isDarkMode
+                    ? [Colors.grey[900]!, Colors.grey[850]!]
+                    : [Colors.white, Colors.grey[100]!],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -82,7 +90,10 @@ class _AdvancedDrawerState extends State<AdvancedDrawer> {
                     backgroundColor:
                         Get.isDarkMode ? Colors.grey[850] : Colors.white,
                     colorText: primaryClr,
-                    icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
+                    icon: const Icon(
+                      Icons.delete_outline,
+                      color: Colors.redAccent,
+                    ),
                   );
                 }
               },
@@ -93,15 +104,19 @@ class _AdvancedDrawerState extends State<AdvancedDrawer> {
               isSwitch: true,
               value: _notificationsEnabled,
               tooltip: "Enable/Disable task notifications",
-              onChanged: (val) {
+              onChanged: (val) async {
                 setState(() => _notificationsEnabled = val);
                 if (val) {
                   widget.notifyHelper.displayNotification(
-                      title: "Todo App", body: "Notifications Enabled");
+                    title: "Todo App",
+                    body: "Notifications Enabled",
+                  );
                 } else {
                   widget.notifyHelper.cancelAllNotification();
                   widget.notifyHelper.displayNotification(
-                      title: "Todo App", body: "Notifications Disabled");
+                    title: "Todo App",
+                    body: "Notifications Disabled",
+                  );
                 }
               },
             ),
@@ -175,10 +190,10 @@ class _AdvancedDrawerState extends State<AdvancedDrawer> {
                   ),
                   isSwitch
                       ? Switch(
-                          value: value,
-                          activeColor: primaryClr,
-                          onChanged: onChanged,
-                        )
+                        value: value,
+                        activeColor: primaryClr,
+                        onChanged: onChanged,
+                      )
                       : const SizedBox.shrink(),
                 ],
               ),

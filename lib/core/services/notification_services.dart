@@ -173,4 +173,13 @@ class NotifyHelper {
   void cancelAllNotification() async {
     await flutterLocalNotificationsPlugin.cancelAll();
   }
+
+  Future<bool> checkNotificationPermission() async {
+    final bool? granted = await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.areNotificationsEnabled();
+
+    return granted ?? false;
+  }
 }

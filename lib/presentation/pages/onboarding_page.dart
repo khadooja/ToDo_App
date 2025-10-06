@@ -17,28 +17,26 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final box = GetStorage();
 
   final List<Map<String, String>> onboardingData = [
-  {
-    "image": "assets/images/task_management.svg",
-    "title": "Organize your day easily",
-    "desc": "Add your tasks and prioritize them in simple and clear steps.",
-  },
-  {
-    "image": "assets/images/reminder.svg",
-    "title": "Don't forget your reminders",
-    "desc": "Receive notifications at the right time to complete your tasks effectively.",
-  },
-  {
-    "image": "assets/images/time_management.svg",
-    "title": "Take control of your time",
-    "desc": "Track your progress daily and see your achievements grow.",
-  },
-];
-
+    {
+      "image": "assets/images/task_management.svg",
+      "title": "Organize your day easily",
+      "desc": "Add your tasks and prioritize them in simple and clear steps.",
+    },
+    {
+      "image": "assets/images/reminder.svg",
+      "title": "Don't forget your reminders",
+      "desc": "Receive notifications at the right time to complete your tasks effectively.",
+    },
+    {
+      "image": "assets/images/time_management.svg",
+      "title": "Take control of your time",
+      "desc": "Track your progress daily and see your achievements grow.",
+    },
+  ];
 
   void _nextPage() {
     if (currentPage == onboardingData.length - 1) {
-      box.write('isFirstTime', false);
-      Get.off(() => const HomePage());
+      _finishOnboarding();
     } else {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 400),
@@ -47,17 +45,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
   }
 
+  void _finishOnboarding() {
+    box.write('isFirstTime', false);
+    Get.off(() => const HomePage());
+  }
+
   Widget _buildPage(Map<String, String> data) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // هنا استخدمنا SvgPicture.asset
-          SvgPicture.asset(
-            data["image"]!,
-            height: 220,
-          ),
+          SvgPicture.asset(data["image"]!, height: 220),
           const SizedBox(height: 40),
           Text(
             data["title"]!,
@@ -84,6 +83,26 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return Scaffold(
       body: Column(
         children: [
+          // زر "Skip" في الأعلى
+          Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 50, right: 20),
+              child: TextButton(
+                onPressed: _finishOnboarding,
+                child: const Text(
+                  "Skip",
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // الصفحات
           Expanded(
             child: PageView.builder(
               controller: _pageController,
@@ -94,6 +113,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               itemBuilder: (_, i) => _buildPage(onboardingData[i]),
             ),
           ),
+
+          // المؤشرات
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 24),
             child: Row(
@@ -115,26 +136,45 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
           ),
+
+          // أزرار "Next" و"Skip"
           Padding(
-            padding: const EdgeInsets.only(bottom: 40),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 100,
-                  vertical: 14,
+            padding: const EdgeInsets.only(bottom: 40, right: 24, left: 24),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // زر Skip هنا أيضًا بجانب Next (اختياري)
+                if (currentPage < onboardingData.length - 1)
+                  TextButton(
+                    onPressed: _finishOnboarding,
+                    child: const Text(
+                      "Skip",
+                      style: TextStyle(color: Colors.grey, fontSize: 16),
+                    ),
+                  )
+                else
+                  const SizedBox(width: 70),
+
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepPurple,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 50,
+                      vertical: 14,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: _nextPage,
+                  child: Text(
+                    currentPage == onboardingData.length - 1
+                        ? "Start"
+                        : "Next",
+                    style: const TextStyle(fontSize: 18, color: Colors.white),
+                  ),
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              onPressed: _nextPage,
-              child: Text(
-                currentPage == onboardingData.length - 1
-                    ? "Start"
-                    : "Next",
-                style: const TextStyle(fontSize: 18, color: Colors.white),
-              ),
+              ],
             ),
           ),
         ],
