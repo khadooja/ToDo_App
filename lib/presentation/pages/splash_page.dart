@@ -22,8 +22,6 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
-
-    // إعداد الانيميشن
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
@@ -36,8 +34,6 @@ class _SplashScreenState extends State<SplashScreen>
         .animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
 
     _controller.forward();
-
-    // بعد الانيميشن، الانتقال للشاشة التالية
     Timer(const Duration(seconds: 3), () {
       bool isFirstTime = box.read('isFirstTime') ?? true;
 

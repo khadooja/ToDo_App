@@ -10,6 +10,7 @@ import 'package:todo/presentation/controllers/task_controller.dart';
 import 'package:todo/data/models/task.dart';
 import 'package:todo/core/services/notification_services.dart';
 import 'package:todo/presentation/widgets/advancedDrawer.dart';
+import 'package:todo/presentation/widgets/cupertino.dart';
 import 'add_task_page.dart';
 import '../../core/utils/size_config.dart';
 import '../widgets/button.dart';
@@ -179,15 +180,8 @@ class _HomePageState extends State<HomePage> {
                   child: IconButton(
                     onPressed: () async {
                       setState(() => _rotationAngle += 6.3);
-                      bool confirm = await Get.defaultDialog(
-                        title: "Delete All Tasks",
-                        middleText:
-                            "Are you sure you want to delete all tasks?",
-                        textConfirm: "Yes",
-                        textCancel: "No",
-                        confirmTextColor: Colors.white,
-                      );
-                      if (confirm) {
+                      bool? confirm = await showDeleteAllDialog();
+                      if (confirm ?? false) {
                         notifyHelper.cancelAllNotification();
                         _taskController.deleteAll(Task());
                         Get.snackbar(
@@ -293,13 +287,14 @@ class _HomePageState extends State<HomePage> {
     _taskController.getTasks();
   }
 
-  _showTasks() {
+  /* _showTasks() {
     return Expanded(
       child: Obx(() {
         if (_taskController.taskList.isEmpty) {
           return _noTaskMgs();
         }
-        return RefreshIndicator(
+        else {
+          return RefreshIndicator(
           color: primaryClr,
           onRefresh: () => _onRefresh(),
           child: ListView.builder(
@@ -310,8 +305,6 @@ class _HomePageState extends State<HomePage> {
             itemCount: _taskController.taskList.length,
             itemBuilder: (BuildContext context, int index) {
               var task = _taskController.taskList[index];
-
-              // تحويل التاريخ بشكل آمن
               DateTime? taskDate;
               try {
                 taskDate =
@@ -380,6 +373,106 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         );
+        }
+      }),
+    );
+  }
+ */
+  _showTasks() {
+    return Expanded(
+      child: Obx(() {
+        if (_taskController.taskList.isEmpty) {
+          return _noTaskMgs();
+        } else {
+          return RefreshIndicator(
+            color: primaryClr,
+            onRefresh: () => _onRefresh(),
+            child: ListView.builder(
+              scrollDirection:
+                  SizeConfig.orientation == Orientation.landscape
+                      ? Axis.horizontal
+                      : Axis.vertical,
+              itemCount: _taskController.taskList.length,
+              itemBuilder: (BuildContext context, int index) {
+                var task = _taskController.taskList[index];
+
+                // تحويل التاريخ بشكل آمن
+                DateTime? taskDate;
+                try {
+                  taskDate =
+                      task.date != null
+                          ? DateFormat.yMd().parse(task.date!)
+                          : null;
+                } catch (e) {
+                  print("Invalid date format: ${task.date}");
+                }
+
+                bool showTask = false;
+
+                if (task.repeat == 'Daily') {
+                  showTask = true;
+                } else if (taskDate != null) {
+                  if (task.repeat == 'Yearly' &&
+                      taskDate.day == _selectedDate.day &&
+                      taskDate.month == _selectedDate.month) {
+                    showTask = true;
+                  } else if (task.repeat == 'Monthly' &&
+                      taskDate.day == _selectedDate.day) {
+                    showTask = true;
+                  } else if (task.repeat == 'Weekly' &&
+                      _selectedDate.difference(taskDate).inDays % 7 == 0) {
+                    showTask = true;
+                  } else if (task.date ==
+                      DateFormat.yMd().format(_selectedDate)) {
+                    showTask = true;
+                  }
+                }
+
+                if (!showTask) return Container();
+
+                // تحويل الوقت بشكل آمن (صيغ متعددة)
+                DateTime? taskTime;
+                try {
+                  taskTime = DateFormat("HH:mm").parse(task.startTime!);
+                } catch (e1) {
+                  try {
+                    taskTime = DateFormat.jm().parse(task.startTime!);
+                  } catch (e2) {
+                    print("Invalid time format: ${task.startTime}");
+                    taskTime = null; // بدل تجاهل المهمة
+                  }
+                }
+
+                if (taskTime == null)
+                  taskTime = DateTime.now(); // احتياطي لتجنب crash
+
+                var myTime = DateFormat("HH:mm").format(taskTime);
+
+                notifyHelper.scheduledNotification(
+                  int.parse(myTime.split(":")[0]),
+                  int.parse(myTime.split(":")[1]),
+                  task,
+                );
+
+                return AnimationConfiguration.staggeredList(
+                  position: index,
+                  duration: const Duration(milliseconds: 1375),
+                  child: SlideAnimation(
+                    horizontalOffset: 300,
+                    child: FadeInAnimation(
+                      duration: const Duration(milliseconds: 1500),
+                      curve: Curves.fastLinearToSlowEaseIn,
+                      child: GestureDetector(
+                        onTap: () => _showBottomSheet(context, task),
+                        child: TaskTile(task: task),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+        }
       }),
     );
   }
@@ -404,8 +497,8 @@ class _HomePageState extends State<HomePage> {
                   SizeConfig.orientation == Orientation.landscape
                       ? const SizedBox(height: 6)
                       : const SizedBox(height: 220),
-                    Image.asset(
-                    "assets/images/undraw_to-do-list_eoia.png",                   
+                  Image.asset(
+                    "assets/images/undraw_to-do-list_eoia.png",
                     height: 140,
                     width: 140,
                     //color: primaryClr,

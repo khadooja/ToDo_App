@@ -10,9 +10,16 @@ class TaskController extends GetxController {
     update();
   }
 
-  Future<int> addTask({Task? task}) {
-    return DBHelper.insert(task);
-  }
+  //Future<int> addTask({Task? task}) {
+    //return DBHelper.insert(task);
+//  }
+
+Future<int> addTask({Task? task}) async {
+  int id = await DBHelper.insert(task); 
+  getTasks(); 
+  return id; 
+}
+
 
   void delete(Task task) async {
     await DBHelper.delete(task);

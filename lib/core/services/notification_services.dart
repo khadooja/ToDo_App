@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:todo/core/services/permission_handler.dart';
 
 import '../../data/models/task.dart';
 import '../../presentation/pages/notification_screen.dart';
@@ -18,6 +19,7 @@ class NotifyHelper {
 
   Future<void> initializeNotification() async {
     tz.initializeTimeZones();
+    await requestNotificationPermission();
     _configureSelectNotificationSubject();
     await _configureLocalTimeZone();
 

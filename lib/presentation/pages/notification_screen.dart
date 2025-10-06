@@ -1,205 +1,114 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todo/core/Theme/colors.dart';
 
-
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key, required this.payload});
-
   final String payload;
 
   @override
-  _NotificationScreenState createState() => _NotificationScreenState();
+  State<NotificationScreen> createState() => _NotificationScreenState();
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-  String _payload = '';
+  late final List<String> _payloadParts;
 
   @override
   void initState() {
     super.initState();
-    _payload = widget.payload;
+    _payloadParts = widget.payload.split('|');
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Get.isDarkMode;
+    final title = _payloadParts[0];
+    final description = _payloadParts.length > 1 ? _payloadParts[1] : '';
+    final date = _payloadParts.length > 2 ? _payloadParts[2] : '';
+
     return Scaffold(
+      backgroundColor: context.theme.scaffoldBackgroundColor,
+      appBar: AppBar(
         backgroundColor: context.theme.scaffoldBackgroundColor,
-        appBar: AppBar(
-          backgroundColor: context.theme.scaffoldBackgroundColor,
-          elevation: 0,
-          title: Text(_payload.toString().split('|')[0],
-              style: TextStyle(
-                  color: Get.isDarkMode ? Colors.white : Colors.black)),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios,
-                color: Get.isDarkMode ? Colors.white : Colors.black),
-            onPressed: () => Get.back(),
+        elevation: 0,
+        title: Text(
+          "Reminder",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black,
           ),
         ),
-        body: SafeArea(
-          child: Center(
-            child: Column(
-              children: [
-                Text(_payload.toString().split('|')[0],
-                    style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.w900,
-                      color: Get.isDarkMode ? Colors.white : darkGreyClr,
-                    )),
-                const SizedBox(
-                  height: 20,
-                ),
-                Text("You have a new reminder",
-                    style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.w300,
-                      color: Get.isDarkMode ? Colors.grey[100] : darkGreyClr,
-                    )),
-                const SizedBox(
-                  height: 20,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Title",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                          color: Get.isDarkMode ? Colors.white : darkGreyClr,
-                        )),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(_payload.toString().split('|')[0],
-                        style: TextStyle(
-                          fontSize: 16,
-                          color:
-                              Get.isDarkMode ? Colors.grey[100] : darkGreyClr,
-                        )),
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Expanded(
-                    child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                  margin: const EdgeInsets.symmetric(horizontal: 30),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    color: primaryClr,
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: isDark ? Colors.white : Colors.black,
+          ),
+          onPressed: () => Get.back(),
+        ),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Card(
+            elevation: 3,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            color: isDark ? darkGreyClr.withOpacity(0.4) : Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: ListView(
+                physics: const BouncingScrollPhysics(),
+                children: [
+                  _buildInfoRow(Icons.text_format, "Title", title, isDark),
+                  const Divider(height: 30),
+                  _buildInfoRow(Icons.description, "Description", description, isDark),
+                  const Divider(height: 30),
+                  _buildInfoRow(Icons.calendar_today_outlined, "Date", date, isDark),
+                  const SizedBox(height: 30),
+                  CupertinoButton.filled(
+                    borderRadius: BorderRadius.circular(12),
+                    child: const Text("Mark as Read"),
+                    onPressed: () => Get.back(),
                   ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.text_format,
-                              size: 35,
-                              color: Colors.white,
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            Text("Title",
-                                style: TextStyle(
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.w300,
-                                  color: Get.isDarkMode
-                                      ? Colors.white
-                                      : darkGreyClr,
-                                )),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        Text(_payload.toString().split('|')[0],
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                            )),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.description,
-                              size: 30,
-                              color: Colors.white,
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            Text("Description",
-                                style: TextStyle(
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.w300,
-                                  color: Get.isDarkMode
-                                      ? Colors.white
-                                      : darkGreyClr,
-                                )),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        Text(
-                          _payload.toString().split('|')[1],
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                          ),
-                          textAlign: TextAlign.justify,
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.calendar_today_outlined,
-                              size: 35,
-                              color: Colors.white,
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            Text("Date",
-                                style: TextStyle(
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.w300,
-                                  color: Get.isDarkMode
-                                      ? Colors.white
-                                      : darkGreyClr,
-                                )),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        Text(_payload.toString().split('|')[2],
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                            )),
-                      ],
-                    ),
-                  ),
-                )),
-                const SizedBox(
-                  height: 10,
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ));
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String label, String value, bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(icon, color: primaryClr, size: 26),
+            const SizedBox(width: 10),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white : darkGreyClr,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Text(
+          value.isNotEmpty ? value : '—',
+          style: TextStyle(
+            fontSize: 16,
+            color: isDark ? Colors.grey[200] : Colors.grey[800],
+          ),
+        ),
+      ],
+    );
   }
 }
