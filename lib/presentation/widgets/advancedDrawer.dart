@@ -24,7 +24,7 @@ class AdvancedDrawer extends StatefulWidget {
 }
 
 class _AdvancedDrawerState extends State<AdvancedDrawer> {
-  late bool _notificationsEnabled;
+   bool _notificationsEnabled=false;
 
   @override
   void initState() {
@@ -38,6 +38,8 @@ class _AdvancedDrawerState extends State<AdvancedDrawer> {
       _notificationsEnabled = isAllowed;
     });
   }
+
+  bool isDark = Get.isDarkMode;
 
   @override
   Widget build(BuildContext context) {
@@ -72,19 +74,54 @@ class _AdvancedDrawerState extends State<AdvancedDrawer> {
               isSwitch: false,
               tooltip: "Remove all tasks permanently",
               onTap: () async {
-                bool confirm = await Get.defaultDialog(
-                  title: "Delete All Tasks",
-                  middleText: "Are you sure?",
-                  textConfirm: "Yes",
-                  textCancel: "No",
-                  confirmTextColor: Colors.white,
-                );
+                // تحقق إذا كانت هناك مهام
+                if (widget.taskController.taskList.isEmpty) {
+                  Get.snackbar(
+                    "No Tasks",
+                    "There are no tasks to delete",
+                    snackPosition: SnackPosition.BOTTOM,
+                    duration: const Duration(seconds: 2),
+                    backgroundColor:
+                        Get.isDarkMode ? Colors.grey[850] : Colors.white,
+                    colorText: isDark ? Colors.white : primaryClr,
+                    icon: const Icon(
+                      Icons.info_outline,
+                      color: Colors.blueAccent,
+                    ),
+                  );
+                  return;
+                }
+
+                // طلب التأكيد للحذف
+                bool confirm =
+                    await Get.dialog<bool>(
+                      AlertDialog(
+                        title: const Text("Delete All Tasks"),
+                        content: const Text(
+                          "Are you sure you want to delete all tasks?",
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Get.back(result: false),
+                            child: const Text("No"),
+                          ),
+                          TextButton(
+                            onPressed: () => Get.back(result: true),
+                            child: const Text("Yes"),
+                          ),
+                        ],
+                      ),
+                    ) ??
+                    false;
+
                 if (confirm) {
                   widget.notifyHelper.cancelAllNotification();
-                  widget.taskController.deleteAll(Task());
+                  widget.taskController.deleteAll();
+                  widget.taskController.getTasks(); 
+
                   Get.snackbar(
                     "All Tasks Deleted",
-                    "You have no tasks",
+                    "You have no tasks now",
                     snackPosition: SnackPosition.BOTTOM,
                     duration: const Duration(seconds: 2),
                     backgroundColor:

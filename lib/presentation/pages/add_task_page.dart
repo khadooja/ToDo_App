@@ -7,6 +7,8 @@ import 'package:todo/presentation/controllers/task_controller.dart';
 import 'package:todo/data/models/task.dart';
 import 'package:todo/presentation/widgets/button.dart';
 import 'package:todo/presentation/widgets/input_field.dart';
+import 'dart:developer' as dev;
+
 
 class AddTaskPage extends StatefulWidget {
   final Task? task; // nullable task
@@ -259,7 +261,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
         repeat: _selectedRepeat,
       ),
     );
-    print('############### ID: $value ###############');
+    dev.log('############### ID: $value ###############');
 
     //Get.back();
   }
@@ -278,7 +280,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
         icon: const Icon(Icons.warning_amber_rounded, color: Colors.red),
       );
     } else {
-      print('All fields are required !');
+      dev.log('All fields are required !');
     }
   }
 
@@ -368,21 +370,42 @@ class _AddTaskPageState extends State<AddTaskPage> {
     });
   }
 
-  _updateTaskInDB() async {
-    await _taskController.updateTask(
-      widget.task!.id!,
-      Task(
-        title: _titleController.text,
-        note: _noteController.text,
-        isCompleted: widget.task!.isCompleted,
-        date: DateFormat.yMd().format(_selectedDate),
-        startTime: _startTime,
-        endTime: _endTime,
-        color: _selectedColor,
-        remind: _selectedRemind,
-        repeat: _selectedRepeat,
-      ),
-    );
+void _updateTaskInDB() async {
+  int result = await _taskController.updateTask(
+    Task(
+      id: widget.task!.id,
+      title: _titleController.text,
+      note: _noteController.text,
+      isCompleted: widget.task!.isCompleted,
+      date: DateFormat.yMd().format(_selectedDate),
+      startTime: _startTime,
+      endTime: _endTime,
+      color: _selectedColor,
+      remind: _selectedRemind,
+      repeat: _selectedRepeat,
+    ),
+  );
+  if (result > 0) {
+    _taskController.getTasks(); // تحديث القائمة
     Get.back();
+    Get.snackbar(
+      "Task Updated",
+      "The task has been successfully updated!",
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.white,
+      colorText: Colors.green,
+      icon: const Icon(Icons.check_circle, color: Colors.green),
+    );
+  } else {
+    Get.snackbar(
+      "Update Failed",
+      "Something went wrong while updating the task.",
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.white,
+      colorText: Colors.red,
+      icon: const Icon(Icons.error, color: Colors.red),
+    );
   }
+}
+
 }

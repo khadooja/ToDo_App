@@ -83,7 +83,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return Scaffold(
       body: Column(
         children: [
-          // زر "Skip" في الأعلى
           Align(
             alignment: Alignment.topRight,
             child: Padding(
@@ -102,7 +101,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
           ),
 
-          // الصفحات
           Expanded(
             child: PageView.builder(
               controller: _pageController,
@@ -113,8 +111,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               itemBuilder: (_, i) => _buildPage(onboardingData[i]),
             ),
           ),
-
-          // المؤشرات
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 24),
             child: Row(
@@ -137,7 +133,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
           ),
 
-          // أزرار "Next" و"Skip"
           Padding(
             padding: const EdgeInsets.only(bottom: 40, right: 24, left: 24),
             child: Row(

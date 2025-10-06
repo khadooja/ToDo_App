@@ -15,6 +15,8 @@ import 'add_task_page.dart';
 import '../../core/utils/size_config.dart';
 import '../widgets/button.dart';
 import '../widgets/task_tile.dart';
+import 'dart:developer' as dev;
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -32,7 +34,6 @@ class _HomePageState extends State<HomePage> {
     notifyHelper = NotifyHelper();
     _taskController.getTasks();
 
-    // استدعاء الدوال غير المتزامنة بطريقة صحيحة
     initializeNotifications();
   }
 
@@ -68,152 +69,85 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  //old appbar
-  /*
-
   AppBar _appBar() {
-    bool isDark = Get.isDarkMode;
-    double _rotationAngle = 0;
+  bool isDark = Get.isDarkMode;
+  double _rotationAngle = 0;
 
-    return AppBar(
-      elevation: 0,
-      backgroundColor: context.theme.scaffoldBackgroundColor,
-      leading: IconButton(
-        onPressed: () {
-          ThemeServices().switchTheme();
-          notifyHelper.displayNotification(
-            title: "Theme Changed",
-            body: isDark ? "Activated Light Theme" : "Activated Dark Theme",
-          );
-        },
+  return AppBar(
+    elevation: 0,
+    backgroundColor: context.theme.scaffoldBackgroundColor,
+    title: Text("My Tasks", style: headingStyle.copyWith(fontSize: 22)),
+    leading: Builder(
+      builder: (context) => IconButton(
         icon: Icon(
-          isDark ? Icons.wb_sunny_outlined : Icons.nightlight_round_outlined,
-          size: 24,
+          Icons.menu,
           color: isDark ? Colors.white : Colors.black87,
         ),
+        onPressed: () {
+          Scaffold.of(context).openDrawer();
+        },
       ),
-      actions: [
-        StatefulBuilder(
-          builder: (context, setState) {
-            return TweenAnimationBuilder<double>(
-              tween: Tween(begin: 0, end: _rotationAngle),
-              duration: const Duration(milliseconds: 600),
-              builder: (context, angle, child) {
-                return Transform.rotate(
-                  angle: angle,
-                  child: IconButton(
-                    onPressed: () {
-                      setState(() => _rotationAngle += 6.3); 
+    ),
+    actions: [
+      StatefulBuilder(
+        builder: (context, setState) {
+          return TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0, end: _rotationAngle),
+            duration: const Duration(milliseconds: 600),
+            builder: (context, angle, child) {
+              return Transform.rotate(
+                angle: angle,
+                child: IconButton(
+                  onPressed: () async {
+
+                    if (_taskController.taskList.isEmpty) {
+  Get.snackbar(
+    "No Tasks",
+    "There are no tasks to delete",
+    snackPosition: SnackPosition.BOTTOM,
+    duration: const Duration(seconds: 2),
+    backgroundColor: isDark ? Colors.grey[850] : Colors.white,
+    colorText: isDark ? Colors.white : primaryClr, 
+    icon: const Icon(Icons.info_outline, color: Colors.blueAccent),
+  );
+  return;
+}
+
+
+                    setState(() => _rotationAngle += 6.3);
+
+                    bool? confirm = await showDeleteAllDialog();
+                    if (confirm ?? false) {
                       notifyHelper.cancelAllNotification();
-                      _taskController.deleteAll(Task());
+                       _taskController.deleteAll(); // حذف جميع المهام
+                      _taskController.getTasks(); // تحديث واجهة المهام
+
                       Get.snackbar(
                         "All Tasks Deleted",
-                        "You have no tasks",
+                        "You have no tasks now",
                         snackPosition: SnackPosition.BOTTOM,
                         duration: const Duration(seconds: 2),
-                        backgroundColor:
-                            isDark ? Colors.grey[850] : Colors.white,
+                        backgroundColor: isDark ? Colors.grey[850] : Colors.white,
                         colorText: primaryClr,
-                        icon: const Icon(
-                          Icons.cleaning_services_outlined,
-                          color: Colors.redAccent,
-                        ),
+                        icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
                       );
-                    },
-                    icon: Icon(
-                      Icons.cleaning_services_outlined,
-                      size: 24,
-                      color: isDark ? Colors.white : Colors.black87,
-                    ),
+                    }
+                  },
+                  icon: Icon(
+                    Icons.delete_outline,
+                    size: 24,
+                    color: isDark ? Colors.white : Colors.black87,
                   ),
-                );
-              },
-            );
-          },
-        ),
-        const SizedBox(width: 10),
-        CircleAvatar(
-          radius: 18,
-          backgroundColor: isDark ? Colors.grey[300] : Colors.grey[700],
-          child: Icon(
-            Icons.person,
-            color: isDark ? Colors.black87 : Colors.white,
-            size: 20,
-          ),
-        ),
-        const SizedBox(width: 20),
-      ],
-    );
-  }
-  */
-
-  AppBar _appBar() {
-    bool isDark = Get.isDarkMode;
-    double _rotationAngle = 0;
-
-    return AppBar(
-      elevation: 0,
-      backgroundColor: context.theme.scaffoldBackgroundColor,
-      title: Text("My Tasks", style: headingStyle.copyWith(fontSize: 22)),
-      leading: Builder(
-        builder:
-            (context) => IconButton(
-              icon: Icon(
-                Icons.menu,
-                color: isDark ? Colors.white : Colors.black87,
-              ),
-              onPressed: () {
-                Scaffold.of(context).openDrawer(); // فتح Drawer
-              },
-            ),
+                ),
+              );
+            },
+          );
+        },
       ),
-      actions: [
-        // زر حذف كل المهام مع Animation
-        StatefulBuilder(
-          builder: (context, setState) {
-            return TweenAnimationBuilder<double>(
-              tween: Tween(begin: 0, end: _rotationAngle),
-              duration: const Duration(milliseconds: 600),
-              builder: (context, angle, child) {
-                return Transform.rotate(
-                  angle: angle,
-                  child: IconButton(
-                    onPressed: () async {
-                      setState(() => _rotationAngle += 6.3);
-                      bool? confirm = await showDeleteAllDialog();
-                      if (confirm ?? false) {
-                        notifyHelper.cancelAllNotification();
-                        _taskController.deleteAll(Task());
-                        Get.snackbar(
-                          "All Tasks Deleted",
-                          "You have no tasks",
-                          snackPosition: SnackPosition.BOTTOM,
-                          duration: const Duration(seconds: 2),
-                          backgroundColor:
-                              isDark ? Colors.grey[850] : Colors.white,
-                          colorText: primaryClr,
-                          icon: const Icon(
-                            Icons.delete_outline,
-                            color: Colors.redAccent,
-                          ),
-                        );
-                      }
-                    },
-                    icon: Icon(
-                      Icons.delete_outline,
-                      size: 24,
-                      color: isDark ? Colors.white : Colors.black87,
-                    ),
-                  ),
-                );
-              },
-            );
-          },
-        ),
-        const SizedBox(width: 20),
-      ],
-    );
-  }
+      const SizedBox(width: 20),
+    ],
+  );
+}
 
   _addTaskBar() {
     return Container(
@@ -287,97 +221,6 @@ class _HomePageState extends State<HomePage> {
     _taskController.getTasks();
   }
 
-  /* _showTasks() {
-    return Expanded(
-      child: Obx(() {
-        if (_taskController.taskList.isEmpty) {
-          return _noTaskMgs();
-        }
-        else {
-          return RefreshIndicator(
-          color: primaryClr,
-          onRefresh: () => _onRefresh(),
-          child: ListView.builder(
-            scrollDirection:
-                SizeConfig.orientation == Orientation.landscape
-                    ? Axis.horizontal
-                    : Axis.vertical,
-            itemCount: _taskController.taskList.length,
-            itemBuilder: (BuildContext context, int index) {
-              var task = _taskController.taskList[index];
-              DateTime? taskDate;
-              try {
-                taskDate =
-                    task.date != null
-                        ? DateFormat.yMd().parse(task.date!)
-                        : null;
-              } catch (e) {
-                print("Invalid date format: ${task.date}");
-              }
-
-              bool showTask = false;
-
-              if (task.repeat == 'Daily') {
-                showTask = true;
-              } else if (taskDate != null) {
-                if (task.repeat == 'Yearly' &&
-                    taskDate.day == _selectedDate.day &&
-                    taskDate.month == _selectedDate.month) {
-                  showTask = true;
-                } else if (task.repeat == 'Monthly' &&
-                    taskDate.day == _selectedDate.day) {
-                  showTask = true;
-                } else if (task.repeat == 'Weekly' &&
-                    _selectedDate.difference(taskDate).inDays % 7 == 0) {
-                  showTask = true;
-                } else if (task.date ==
-                    DateFormat.yMd().format(_selectedDate)) {
-                  showTask = true;
-                }
-              }
-
-              if (!showTask) return Container();
-
-              // تحويل الوقت بشكل آمن
-              DateTime? taskTime;
-              try {
-                taskTime = DateFormat.jm().parse(task.startTime!);
-              } catch (e) {
-                print("Invalid time format: ${task.startTime}");
-                return Container(); // تجاهل المهمة لو الوقت غير صالح
-              }
-
-              var myTime = DateFormat("HH:mm").format(taskTime);
-
-              notifyHelper.scheduledNotification(
-                int.parse(myTime.split(":")[0]),
-                int.parse(myTime.split(":")[1]),
-                task,
-              );
-
-              return AnimationConfiguration.staggeredList(
-                position: index,
-                duration: const Duration(milliseconds: 1375),
-                child: SlideAnimation(
-                  horizontalOffset: 300,
-                  child: FadeInAnimation(
-                    duration: const Duration(milliseconds: 1500),
-                    curve: Curves.fastLinearToSlowEaseIn,
-                    child: GestureDetector(
-                      onTap: () => _showBottomSheet(context, task),
-                      child: TaskTile(task: task),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        );
-        }
-      }),
-    );
-  }
- */
   _showTasks() {
     return Expanded(
       child: Obx(() {
@@ -402,7 +245,7 @@ class _HomePageState extends State<HomePage> {
                           ? DateFormat.yMd().parse(task.date!)
                           : null;
                 } catch (e) {
-                  print("Invalid date format: ${task.date}");
+                  dev.log("Invalid date format: ${task.date}");
                 }
 
                 bool showTask = false;
@@ -428,7 +271,6 @@ class _HomePageState extends State<HomePage> {
 
                 if (!showTask) return Container();
 
-                // تحويل الوقت بشكل آمن (صيغ متعددة)
                 DateTime? taskTime;
                 try {
                   taskTime = DateFormat("HH:mm").parse(task.startTime!);
@@ -436,13 +278,12 @@ class _HomePageState extends State<HomePage> {
                   try {
                     taskTime = DateFormat.jm().parse(task.startTime!);
                   } catch (e2) {
-                    print("Invalid time format: ${task.startTime}");
-                    taskTime = null; // بدل تجاهل المهمة
+                    dev.log("Invalid time format: ${task.startTime}");
+                    taskTime = null; 
                   }
                 }
 
-                if (taskTime == null)
-                  taskTime = DateTime.now(); // احتياطي لتجنب crash
+                taskTime ??= DateTime.now(); 
 
                 var myTime = DateFormat("HH:mm").format(taskTime);
 
@@ -465,11 +306,11 @@ class _HomePageState extends State<HomePage> {
                             () => _showBottomSheet(
                               context,
                               task,
-                            ), // نقرة واحدة: تفتح الخيارات
+                            ), 
                         onDoubleTap: () async {
                           // نقرتين: تعديل مباشر
                           await Get.to(() => AddTaskPage(task: task));
-                          _taskController.getTasks(); // تحديث بعد التعديل
+                          _taskController.getTasks(); 
                         },
                         child: TaskTile(task: task),
                       ),
@@ -508,8 +349,6 @@ class _HomePageState extends State<HomePage> {
                     "assets/images/undraw_to-do-list_eoia.png",
                     height: 140,
                     width: 140,
-                    //color: primaryClr,
-                    //semanticsLabel: "Tasks",
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
@@ -613,7 +452,7 @@ class _HomePageState extends State<HomePage> {
                       await Get.to(
                         () => AddTaskPage(task: task),
                       ); // فتح صفحة التعديل
-                      _taskController.getTasks(); // تحديث المهام بعد الرجوع
+                      _taskController.getTasks(); 
                     },
                     clr: Colors.orangeAccent,
                   ),
