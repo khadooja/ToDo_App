@@ -8,7 +8,6 @@ import '../../presentation/pages/notification_screen.dart';
 import 'package:todo_app_new/core/services/permission_handler.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-
 class NotifyHelper {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -29,18 +28,18 @@ class NotifyHelper {
     // إعدادات iOS/ macOS الحديثة
     final DarwinInitializationSettings initializationSettingsDarwin =
         DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-      //onDidReceiveLocalNotification: onDidReceiveLocalNotification,
-    );
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true,
+          //onDidReceiveLocalNotification: onDidReceiveLocalNotification,
+        );
 
     final InitializationSettings initializationSettings =
         InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsDarwin,
-      macOS: initializationSettingsDarwin,
-    );
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsDarwin,
+          macOS: initializationSettingsDarwin,
+        );
 
     await flutterLocalNotificationsPlugin.initialize(
       settings: initializationSettings,
@@ -55,26 +54,34 @@ class NotifyHelper {
 
   // للنسخ القديمة من iOS
   Future<void> onDidReceiveLocalNotification(
-      int id, String? title, String? body, String? payload) async {
+    int id,
+    String? title,
+    String? body,
+    String? payload,
+  ) async {
     if (body != null) Get.dialog(Text(body));
   }
 
   // إشعار فوري
-  Future<void> displayNotification(
-      {required String title, required String body}) async {
+  Future<void> displayNotification({
+    required String title,
+    required String body,
+  }) async {
     const AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
-      'your_channel_id',
-      'your_channel_name',
-      channelDescription: 'your_channel_description',
-      importance: Importance.max,
-      priority: Priority.high,
-    );
+          'your_channel_id',
+          'your_channel_name',
+          channelDescription: 'your_channel_description',
+          importance: Importance.max,
+          priority: Priority.high,
+        );
 
     final DarwinNotificationDetails iosDetails = DarwinNotificationDetails();
 
-    final NotificationDetails platformDetails =
-        NotificationDetails(android: androidDetails, iOS: iosDetails);
+    final NotificationDetails platformDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
 
     await flutterLocalNotificationsPlugin.show(
       id: 0,
@@ -179,12 +186,24 @@ class NotifyHelper {
           scheduledDate = scheduledDate.add(const Duration(days: 7));
           break;
         case RepeatType.monthly:
-          scheduledDate = tz.TZDateTime(tz.local, now.year, now.month + 1,
-              task.date.day, task.startTime.hour, task.startTime.minute);
+          scheduledDate = tz.TZDateTime(
+            tz.local,
+            now.year,
+            now.month + 1,
+            task.date.day,
+            task.startTime.hour,
+            task.startTime.minute,
+          );
           break;
         case RepeatType.yearly:
-          scheduledDate = tz.TZDateTime(tz.local, now.year + 1,
-              task.date.month, task.date.day, task.startTime.hour, task.startTime.minute);
+          scheduledDate = tz.TZDateTime(
+            tz.local,
+            now.year + 1,
+            task.date.month,
+            task.date.day,
+            task.startTime.hour,
+            task.startTime.minute,
+          );
           break;
         case RepeatType.none:
           // Known follow-up (unchanged from Phase 1): a one-off task whose
@@ -222,7 +241,8 @@ class NotifyHelper {
   Future<bool> checkNotificationPermission() async {
     final bool? granted = await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.areNotificationsEnabled();
 
     return granted ?? false;

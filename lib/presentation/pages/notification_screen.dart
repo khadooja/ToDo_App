@@ -65,9 +65,19 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 children: [
                   _buildInfoRow(Icons.text_format, "Title", title, isDark),
                   const Divider(height: 30),
-                  _buildInfoRow(Icons.description, "Description", description, isDark),
+                  _buildInfoRow(
+                    Icons.description,
+                    "Description",
+                    description,
+                    isDark,
+                  ),
                   const Divider(height: 30),
-                  _buildInfoRow(Icons.calendar_today_outlined, "Date", date, isDark),
+                  _buildInfoRow(
+                    Icons.calendar_today_outlined,
+                    "Date",
+                    date,
+                    isDark,
+                  ),
                   const SizedBox(height: 30),
                   CupertinoButton.filled(
                     borderRadius: BorderRadius.circular(12),

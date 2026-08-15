@@ -69,9 +69,7 @@ void main() {
   setUp(() {
     fakeRepository = FakeTaskRepository();
     container = ProviderContainer(
-      overrides: [
-        taskRepositoryProvider.overrideWithValue(fakeRepository),
-      ],
+      overrides: [taskRepositoryProvider.overrideWithValue(fakeRepository)],
     );
   });
 
@@ -89,7 +87,9 @@ void main() {
   test('addTask adds to the repository and refreshes state', () async {
     await container.read(taskListProvider.future); // wait for initial build
 
-    await container.read(taskListProvider.notifier).addTask(_buildTask(title: 'New task'));
+    await container
+        .read(taskListProvider.notifier)
+        .addTask(_buildTask(title: 'New task'));
 
     final state = container.read(taskListProvider);
     expect(state.value, hasLength(1));
@@ -101,8 +101,10 @@ void main() {
     await fakeRepository.addTask(_buildTask(title: 'Remove'));
     await container.read(taskListProvider.future);
 
-    final toRemove =
-        container.read(taskListProvider).value!.firstWhere((t) => t.title == 'Remove');
+    final toRemove = container
+        .read(taskListProvider)
+        .value!
+        .firstWhere((t) => t.title == 'Remove');
     await container.read(taskListProvider.notifier).deleteTask(toRemove);
 
     final state = container.read(taskListProvider);

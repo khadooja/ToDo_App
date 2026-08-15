@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
- 
+
 /// How often a task recurs.
 ///
 /// Replaces the old raw `String repeat` field ('Daily', 'Weekly', ...),
 /// which was error-prone (typos wouldn't be caught by the compiler) and let
 /// invalid values silently fall through every switch statement that used it.
 enum RepeatType { none, daily, weekly, monthly, yearly }
- 
+
 extension RepeatTypeX on RepeatType {
   /// Human-readable label, also used as the storage value in SQLite so
   /// existing rows written by the old String-based schema stay readable.
@@ -24,7 +24,7 @@ extension RepeatTypeX on RepeatType {
         return 'Yearly';
     }
   }
- 
+
   static RepeatType fromLabel(String label) {
     return RepeatType.values.firstWhere(
       (r) => r.label == label,
@@ -32,14 +32,14 @@ extension RepeatTypeX on RepeatType {
     );
   }
 }
- 
+
 /// Task accent color.
 ///
 /// Replaces the old raw `int color` (0/1/2), which had to be kept in sync
 /// by hand with a hardcoded switch statement in task_tile.dart — nothing
 /// stopped the two from drifting apart.
 enum TaskColor { blue, pink, orange }
- 
+
 class Task {
   final int? id;
   final String title;
@@ -51,7 +51,7 @@ class Task {
   final TaskColor color;
   final int remind; // minutes early
   final RepeatType repeat;
- 
+
   const Task({
     this.id,
     required this.title,
@@ -64,7 +64,7 @@ class Task {
     this.remind = 5,
     this.repeat = RepeatType.none,
   });
- 
+
   Task copyWith({
     int? id,
     String? title,

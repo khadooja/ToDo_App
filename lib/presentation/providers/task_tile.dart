@@ -9,7 +9,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo_app_new/presentation/pages/add_task_page.dart';
 import 'package:todo_app_new/presentation/providers/task_providers.dart';
 
-
 class TaskTile extends ConsumerWidget {
   const TaskTile({super.key, required this.task});
 
@@ -24,20 +23,18 @@ class TaskTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
-      padding:
-          SizeConfig.orientation == Orientation.landscape
-              ? EdgeInsets.symmetric(
-                horizontal: getProportionateScreenWidth(4),
-                vertical: getProportionateScreenHeight(4),
-              )
-              : EdgeInsets.symmetric(
-                horizontal: getProportionateScreenWidth(20),
-                vertical: getProportionateScreenHeight(10),
-              ),
-      width:
-          SizeConfig.orientation == Orientation.landscape
-              ? SizeConfig.screenWidth / 2
-              : SizeConfig.screenWidth,
+      padding: SizeConfig.orientation == Orientation.landscape
+          ? EdgeInsets.symmetric(
+              horizontal: getProportionateScreenWidth(4),
+              vertical: getProportionateScreenHeight(4),
+            )
+          : EdgeInsets.symmetric(
+              horizontal: getProportionateScreenWidth(20),
+              vertical: getProportionateScreenHeight(10),
+            ),
+      width: SizeConfig.orientation == Orientation.landscape
+          ? SizeConfig.screenWidth / 2
+          : SizeConfig.screenWidth,
       margin: EdgeInsets.only(bottom: getProportionateScreenHeight(8)),
       child: Container(
         padding: const EdgeInsets.all(8),

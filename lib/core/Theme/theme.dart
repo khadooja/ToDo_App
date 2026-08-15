@@ -1,7 +1,7 @@
 import 'colors.dart';
 import 'app_spacing.dart';
 import 'package:flutter/material.dart';
- 
+
 class Themes {
   static final light = ThemeData(
     useMaterial3: true,
@@ -40,7 +40,7 @@ class Themes {
       ),
     ),
   );
- 
+
   static final dark = ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
@@ -76,4 +76,3 @@ class Themes {
     ),
   );
 }
- 

@@ -1,7 +1,5 @@
 import 'package:todo_app_new/domain/entities/task.dart';
 
-
-
 /// Contract the presentation layer depends on. It has no idea SQLite exists
 /// behind it — that's the whole point. Before this refactor, TaskController
 /// called DBHelper's *static* methods directly, which meant:

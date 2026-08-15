@@ -2,7 +2,6 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app_new/core/Theme/text_styles.dart';
 
-
 class InputField extends StatelessWidget {
   const InputField({
     super.key,
@@ -40,12 +39,11 @@ class InputField extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color:
-                      isDark
-                          // ignore: deprecated_member_use
-                          ? Colors.black.withOpacity(0.3)
-                          // ignore: deprecated_member_use
-                          : Colors.grey.withOpacity(0.2),
+                  color: isDark
+                      // ignore: deprecated_member_use
+                      ? Colors.black.withOpacity(0.3)
+                      // ignore: deprecated_member_use
+                      : Colors.grey.withOpacity(0.2),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),

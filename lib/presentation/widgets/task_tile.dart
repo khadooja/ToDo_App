@@ -8,7 +8,7 @@ import 'package:todo_app_new/core/Theme/text_styles.dart';
 import 'package:todo_app_new/core/Theme/app_spacing.dart';
 import 'package:todo_app_new/presentation/pages/add_task_page.dart';
 import 'package:todo_app_new/presentation/providers/task_providers.dart';
- 
+
 /// A single task card.
 ///
 /// UI/UX polish pass: the previous version filled the whole card with a
@@ -20,15 +20,15 @@ import 'package:todo_app_new/presentation/providers/task_providers.dart';
 /// existed; it just wasn't surfaced on the card before).
 class TaskTile extends ConsumerWidget {
   const TaskTile({super.key, required this.task});
- 
+
   final Task task;
- 
+
   String _formatTime(TimeOfDay time) {
     final now = DateTime.now();
     final dt = DateTime(now.year, now.month, now.day, time.hour, time.minute);
     return DateFormat.jm().format(dt);
   }
- 
+
   Color _accentColor(TaskColor color) {
     switch (color) {
       case TaskColor.blue:
@@ -39,13 +39,13 @@ class TaskTile extends ConsumerWidget {
         return orangeClr;
     }
   }
- 
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Get.isDarkMode;
     final accent = _accentColor(task.color);
     final surface = isDark ? const Color(0xFF1E1E22) : Colors.white;
- 
+
     return Container(
       margin: const EdgeInsets.symmetric(
         horizontal: AppSpacing.lg,
@@ -85,7 +85,11 @@ class TaskTile extends ConsumerWidget {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _CompletionCheckbox(task: task, accent: accent, ref: ref),
+                          _CompletionCheckbox(
+                            task: task,
+                            accent: accent,
+                            ref: ref,
+                          ),
                           const SizedBox(width: AppSpacing.xs),
                           Expanded(
                             child: AnimatedDefaultTextStyle(
@@ -96,7 +100,9 @@ class TaskTile extends ConsumerWidget {
                                     ? TextDecoration.lineThrough
                                     : TextDecoration.none,
                                 color: task.isCompleted
-                                    ? (isDark ? Colors.grey[500] : Colors.grey[400])
+                                    ? (isDark
+                                          ? Colors.grey[500]
+                                          : Colors.grey[400])
                                     : (isDark ? Colors.white : Colors.black87),
                               ),
                               child: Text(
@@ -112,7 +118,9 @@ class TaskTile extends ConsumerWidget {
                             icon: Icon(
                               Icons.edit_outlined,
                               size: 18,
-                              color: isDark ? Colors.grey[400] : Colors.grey[500],
+                              color: isDark
+                                  ? Colors.grey[400]
+                                  : Colors.grey[500],
                             ),
                             onPressed: () async {
                               await Get.to(() => AddTaskPage(task: task));
@@ -129,12 +137,17 @@ class TaskTile extends ConsumerWidget {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: bodyStyle.copyWith(
-                              color: isDark ? Colors.grey[400] : Colors.grey[600],
+                              color: isDark
+                                  ? Colors.grey[400]
+                                  : Colors.grey[600],
                             ),
                           ),
                         ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 32, top: AppSpacing.xs),
+                        padding: const EdgeInsets.only(
+                          left: 32,
+                          top: AppSpacing.xs,
+                        ),
                         child: Wrap(
                           spacing: AppSpacing.xs,
                           runSpacing: 4,
@@ -166,7 +179,7 @@ class TaskTile extends ConsumerWidget {
     );
   }
 }
- 
+
 /// Tap-to-complete checkbox. Only marks a task complete — the repository
 /// layer has no "uncomplete" operation (by design, unchanged in this UI
 /// pass), so this intentionally does nothing once a task is already
@@ -177,11 +190,11 @@ class _CompletionCheckbox extends StatelessWidget {
     required this.accent,
     required this.ref,
   });
- 
+
   final Task task;
   final Color accent;
   final WidgetRef ref;
- 
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -201,21 +214,30 @@ class _CompletionCheckbox extends StatelessWidget {
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 200),
           child: task.isCompleted
-              ? const Icon(Icons.check, size: 14, color: Colors.white, key: ValueKey('done'))
+              ? const Icon(
+                  Icons.check,
+                  size: 14,
+                  color: Colors.white,
+                  key: ValueKey('done'),
+                )
               : const SizedBox.shrink(key: ValueKey('todo')),
         ),
       ),
     );
   }
 }
- 
+
 class _MetaChip extends StatelessWidget {
-  const _MetaChip({required this.icon, required this.label, required this.isDark});
- 
+  const _MetaChip({
+    required this.icon,
+    required this.label,
+    required this.isDark,
+  });
+
   final IconData icon;
   final String label;
   final bool isDark;
- 
+
   @override
   Widget build(BuildContext context) {
     final color = isDark ? Colors.grey[400] : Colors.grey[600];
@@ -229,4 +251,3 @@ class _MetaChip extends StatelessWidget {
     );
   }
 }
- 

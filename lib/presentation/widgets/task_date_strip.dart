@@ -55,7 +55,10 @@ class TaskDateStrip extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(DateFormat.yMMMM().format(selectedDate), style: titleStyle),
+                Text(
+                  DateFormat.yMMMM().format(selectedDate),
+                  style: titleStyle,
+                ),
                 IconButton(
                   tooltip: 'Open calendar',
                   onPressed: () => _openFullCalendar(context),

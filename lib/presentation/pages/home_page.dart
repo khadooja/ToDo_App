@@ -23,30 +23,30 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
- 
+
   @override
   ConsumerState<HomePage> createState() => _HomePageState();
 }
- 
+
 class _HomePageState extends ConsumerState<HomePage> {
   late NotifyHelper notifyHelper;
   final _box = GetStorage();
   DateTime _selectedDate = DateTime.now();
- 
+
   @override
   void initState() {
     super.initState();
     notifyHelper = NotifyHelper();
     initializeNotifications();
   }
- 
+
   Future<void> initializeNotifications() async {
     await notifyHelper.initializeNotification();
   }
- 
+
   // --- Everything below this point through _matchesSelectedDate is
   // unchanged business logic, carried over as-is from before this UI pass.
- 
+
   void _scheduleNotifications(List<Task> tasks) {
     bool notificationsEnabled = _box.read<bool>('notificationsEnabled') ?? true;
     if (!notificationsEnabled) return;
@@ -54,10 +54,10 @@ class _HomePageState extends ConsumerState<HomePage> {
       notifyHelper.scheduledNotification(task);
     }
   }
- 
+
   bool _isSameDay(DateTime a, DateTime b) =>
       a.year == b.year && a.month == b.month && a.day == b.day;
- 
+
   bool _matchesSelectedDate(Task task) {
     switch (task.repeat) {
       case RepeatType.daily:
@@ -73,14 +73,14 @@ class _HomePageState extends ConsumerState<HomePage> {
         return _isSameDay(task.date, _selectedDate);
     }
   }
- 
+
   String _greeting(AppLocalizations l10n) {
     final hour = DateTime.now().hour;
     if (hour < 12) return l10n.greetingMorning;
     if (hour < 17) return l10n.greetingAfternoon;
     return l10n.greetingEvening;
   }
- 
+
   /// Pure UI grouping — does not change how tasks are stored, filtered, or
   /// scheduled. A task's start-time hour decides which bucket it falls in.
   String _bucketLabel(Task task, AppLocalizations l10n) {
@@ -89,24 +89,24 @@ class _HomePageState extends ConsumerState<HomePage> {
     if (hour < 17) return l10n.sectionAfternoon;
     return l10n.sectionEvening;
   }
- 
+
   Future<void> _goAddTask() async {
     await Get.to(() => const AddTaskPage());
     ref.read(taskListProvider.notifier).refresh();
   }
- 
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     final l10n = AppLocalizations.of(context)!;
     final isDark = Get.isDarkMode;
- 
+
     // Schedule (or reschedule) notifications whenever the task list
     // changes — unchanged from before this UI pass.
     ref.listen<AsyncValue<List<Task>>>(taskListProvider, (previous, next) {
       next.whenData(_scheduleNotifications);
     });
- 
+
     return Scaffold(
       backgroundColor: context.theme.scaffoldBackgroundColor,
       appBar: _appBar(l10n, isDark),
@@ -130,10 +130,10 @@ class _HomePageState extends ConsumerState<HomePage> {
       ),
     );
   }
- 
+
   AppBar _appBar(AppLocalizations l10n, bool isDark) {
     double rotationAngle = 0;
- 
+
     return AppBar(
       title: Text(
         l10n.myTasks,
@@ -142,7 +142,10 @@ class _HomePageState extends ConsumerState<HomePage> {
       leading: Builder(
         builder: (context) => IconButton(
           tooltip: 'Open menu',
-          icon: Icon(Icons.menu_rounded, color: isDark ? Colors.white : Colors.black87),
+          icon: Icon(
+            Icons.menu_rounded,
+            color: isDark ? Colors.white : Colors.black87,
+          ),
           onPressed: () => Scaffold.of(context).openDrawer(),
         ),
       ),
@@ -160,18 +163,24 @@ class _HomePageState extends ConsumerState<HomePage> {
                     onPressed: () async {
                       final tasks = ref.read(taskListProvider).value ?? [];
                       if (tasks.isEmpty) {
-                        AppSnackbar.info("No Tasks", "There are no tasks to delete");
+                        AppSnackbar.info(
+                          "No Tasks",
+                          "There are no tasks to delete",
+                        );
                         return;
                       }
- 
+
                       setState(() => rotationAngle += 6.3);
- 
+
                       bool? confirm = await showDeleteAllDialog();
                       if (confirm ?? false) {
                         notifyHelper.cancelAllNotification();
                         await ref.read(taskListProvider.notifier).deleteAll();
- 
-                        AppSnackbar.deleted("All Tasks Deleted", "You have no tasks now");
+
+                        AppSnackbar.deleted(
+                          "All Tasks Deleted",
+                          "You have no tasks now",
+                        );
                       }
                     },
                     icon: Icon(
@@ -189,14 +198,19 @@ class _HomePageState extends ConsumerState<HomePage> {
       ],
     );
   }
- 
+
   /// New: greeting + full selected-date label + a live task-count badge.
   /// Replaces the old static "Today" header, which carried no real
   /// information (it always said "Today" regardless of what date was
   /// actually selected in the strip).
   Widget _header(AppLocalizations l10n, bool isDark) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.xs, AppSpacing.lg, 0),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.xs,
+        AppSpacing.lg,
+        0,
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -219,17 +233,24 @@ class _HomePageState extends ConsumerState<HomePage> {
           Consumer(
             builder: (context, ref, _) {
               final asyncTasks = ref.watch(taskListProvider);
-              final count = asyncTasks.value?.where(_matchesSelectedDate).length ?? 0;
+              final count =
+                  asyncTasks.value?.where(_matchesSelectedDate).length ?? 0;
               return Container(
                 margin: const EdgeInsets.only(top: 4),
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: primaryClr.withOpacity(isDark ? 0.22 : 0.1),
                   borderRadius: BorderRadius.circular(AppRadius.pill),
                 ),
                 child: Text(
                   l10n.taskCountLabel(count),
-                  style: captionStyle.copyWith(color: primaryClr, fontWeight: FontWeight.w700),
+                  style: captionStyle.copyWith(
+                    color: primaryClr,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               );
             },
@@ -238,7 +259,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       ),
     );
   }
- 
+
   Widget _showTasks(AppLocalizations l10n) {
     return Expanded(
       child: Consumer(
@@ -258,14 +279,14 @@ class _HomePageState extends ConsumerState<HomePage> {
                   fillHeight: true,
                 );
               }
- 
+
               final visibleTasks = allTasks.where(_matchesSelectedDate).toList()
                 ..sort((a, b) {
                   final aMinutes = a.startTime.hour * 60 + a.startTime.minute;
                   final bMinutes = b.startTime.hour * 60 + b.startTime.minute;
                   return aMinutes.compareTo(bMinutes);
                 });
- 
+
               if (visibleTasks.isEmpty) {
                 return _wrapRefresh(
                   EmptyState(
@@ -275,14 +296,16 @@ class _HomePageState extends ConsumerState<HomePage> {
                   fillHeight: true,
                 );
               }
- 
+
               // Group into Morning / Afternoon / Evening, preserving
               // chronological order within each bucket.
               final buckets = <String, List<Task>>{};
               for (final task in visibleTasks) {
-                buckets.putIfAbsent(_bucketLabel(task, l10n), () => []).add(task);
+                buckets
+                    .putIfAbsent(_bucketLabel(task, l10n), () => [])
+                    .add(task);
               }
- 
+
               final tiles = <Widget>[];
               int animationIndex = 0;
               for (final entry in buckets.entries) {
@@ -312,7 +335,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               }
               // Clearance so the last card isn't hidden behind the FAB.
               tiles.add(const SizedBox(height: 90));
- 
+
               return _wrapRefresh(
                 AnimationLimiter(child: Column(children: tiles)),
               );
@@ -322,7 +345,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       ),
     );
   }
- 
+
   Widget _wrapRefresh(Widget content, {bool fillHeight = false}) {
     return RefreshIndicator(
       color: primaryClr,
@@ -337,7 +360,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       ),
     );
   }
- 
+
   Widget _errorState() {
     return Center(
       child: Padding(
@@ -362,10 +385,10 @@ class _HomePageState extends ConsumerState<HomePage> {
       ),
     );
   }
- 
+
   // --- Bottom sheet: unchanged logic, only the outer container gained
   // rounded top corners to match the new card language.
- 
+
   Widget _buildBottomSheet({
     required String label,
     required Function() onTap,
@@ -381,46 +404,44 @@ class _HomePageState extends ConsumerState<HomePage> {
         decoration: BoxDecoration(
           border: Border.all(
             width: 2,
-            color:
-                isClose == true
-                    ? Get.isDarkMode
-                        ? Colors.grey[600]!
-                        : Colors.grey[300]!
-                    : clr,
-          ),
-          borderRadius: BorderRadius.circular(20),
-          color:
-              isClose == true
-                  ? Get.isDarkMode
+            color: isClose == true
+                ? Get.isDarkMode
                       ? Colors.grey[600]!
                       : Colors.grey[300]!
-                  : clr,
+                : clr,
+          ),
+          borderRadius: BorderRadius.circular(20),
+          color: isClose == true
+              ? Get.isDarkMode
+                    ? Colors.grey[600]!
+                    : Colors.grey[300]!
+              : clr,
         ),
         child: Center(
           child: Text(
             label,
-            style:
-                isClose ? titelStyle : titelStyle.copyWith(color: Colors.white),
+            style: isClose
+                ? titelStyle
+                : titelStyle.copyWith(color: Colors.white),
           ),
         ),
       ),
     );
   }
- 
+
   void _showBottomSheet(BuildContext context, Task task) {
     Get.bottomSheet(
       SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.only(top: 4),
           width: SizeConfig.screenWidth,
-          height:
-              (SizeConfig.orientation == Orientation.landscape)
-                  ? (task.isCompleted)
-                      ? SizeConfig.screenHeight * 0.6
-                      : SizeConfig.screenHeight * 0.8
-                  : (task.isCompleted)
-                  ? SizeConfig.screenHeight * 0.30
-                  : SizeConfig.screenHeight * 0.39,
+          height: (SizeConfig.orientation == Orientation.landscape)
+              ? (task.isCompleted)
+                    ? SizeConfig.screenHeight * 0.6
+                    : SizeConfig.screenHeight * 0.8
+              : (task.isCompleted)
+              ? SizeConfig.screenHeight * 0.30
+              : SizeConfig.screenHeight * 0.39,
           decoration: BoxDecoration(
             color: Get.isDarkMode ? darkHeaderClr : Colors.white,
             borderRadius: const BorderRadius.only(
@@ -445,26 +466,28 @@ class _HomePageState extends ConsumerState<HomePage> {
               task.isCompleted
                   ? Container()
                   : _buildBottomSheet(
-                    label: "Edit Task",
-                    onTap: () async {
-                      Get.back();
-                      await Get.to(() => AddTaskPage(task: task));
-                      ref.read(taskListProvider.notifier).refresh();
-                    },
-                    clr: Colors.orangeAccent,
-                  ),
- 
+                      label: "Edit Task",
+                      onTap: () async {
+                        Get.back();
+                        await Get.to(() => AddTaskPage(task: task));
+                        ref.read(taskListProvider.notifier).refresh();
+                      },
+                      clr: Colors.orangeAccent,
+                    ),
+
               task.isCompleted
                   ? Container()
                   : _buildBottomSheet(
-                    label: "Task Completed",
-                    onTap: () {
-                      notifyHelper.cancelNotification(task);
-                      ref.read(taskListProvider.notifier).markCompleted(task.id!);
-                      Get.back();
-                    },
-                    clr: primaryClr,
-                  ),
+                      label: "Task Completed",
+                      onTap: () {
+                        notifyHelper.cancelNotification(task);
+                        ref
+                            .read(taskListProvider.notifier)
+                            .markCompleted(task.id!);
+                        Get.back();
+                      },
+                      clr: primaryClr,
+                    ),
               _buildBottomSheet(
                 label: "Delete Task",
                 onTap: () async {

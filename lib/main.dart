@@ -12,7 +12,6 @@ import 'package:todo_app_new/core/services/notification_services.dart';
 // lib/l10n/. If your IDE shows this as missing, run `flutter pub get` once.
 import 'package:todo_app_new/l10n/app_localizations.dart';
 
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -21,11 +20,7 @@ Future<void> main() async {
   // NOTE: DBHelper.initDb() used to be called explicitly here. The new
   // TaskLocalDataSource opens the database lazily on first query instead
   // (see task_local_data_source.dart), so no explicit init call is needed.
-  runApp(
-    const ProviderScope(
-      child: MyApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -59,4 +54,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

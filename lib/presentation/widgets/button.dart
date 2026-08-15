@@ -35,7 +35,7 @@ class MyButton extends StatelessWidget {
         child: Text(
           label,
           style: bodyStyle.copyWith(
-            color: Colors.white, 
+            color: Colors.white,
             fontWeight: FontWeight.w600,
           ),
           textAlign: TextAlign.center,

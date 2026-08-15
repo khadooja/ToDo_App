@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:todo_app_new/data/db/task_dto.dart';
 import 'package:todo_app_new/domain/entities/task.dart';
 
-
 void main() {
   group('TaskDto', () {
     test('round-trips a fully populated Task through toMap/fromMap', () {
@@ -39,7 +38,11 @@ void main() {
       final task = Task(
         title: 't',
         note: 'n',
-        date: DateTime(2026, 1, 5), // Jan 5th - the classic day/month mixup date
+        date: DateTime(
+          2026,
+          1,
+          5,
+        ), // Jan 5th - the classic day/month mixup date
         startTime: const TimeOfDay(hour: 8, minute: 0),
         endTime: const TimeOfDay(hour: 9, minute: 0),
       );
@@ -64,27 +67,30 @@ void main() {
       expect(map['endTime'], '23:59');
     });
 
-    test('fromMap falls back sanely on malformed/missing fields instead of throwing', () {
-      final restored = TaskDto.fromMap(const {
-        'id': 1,
-        'title': null,
-        'note': null,
-        'isCompleted': null,
-        'date': 'not-a-date',
-        'startTime': 'garbage',
-        'endTime': null,
-        'color': 99, // out of range
-        'remind': null,
-        'repeat': 'NotARealRepeatValue',
-      });
+    test(
+      'fromMap falls back sanely on malformed/missing fields instead of throwing',
+      () {
+        final restored = TaskDto.fromMap(const {
+          'id': 1,
+          'title': null,
+          'note': null,
+          'isCompleted': null,
+          'date': 'not-a-date',
+          'startTime': 'garbage',
+          'endTime': null,
+          'color': 99, // out of range
+          'remind': null,
+          'repeat': 'NotARealRepeatValue',
+        });
 
-      expect(restored.title, '');
-      expect(restored.note, '');
-      expect(restored.isCompleted, false);
-      expect(restored.color, TaskColor.blue); // safe fallback
-      expect(restored.repeat, RepeatType.none); // safe fallback
-      expect(restored.remind, 5); // default
-    });
+        expect(restored.title, '');
+        expect(restored.note, '');
+        expect(restored.isCompleted, false);
+        expect(restored.color, TaskColor.blue); // safe fallback
+        expect(restored.repeat, RepeatType.none); // safe fallback
+        expect(restored.remind, 5); // default
+      },
+    );
 
     test('repeat label mapping is stable in both directions', () {
       for (final repeat in RepeatType.values) {

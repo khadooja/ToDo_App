@@ -10,7 +10,6 @@ import 'package:todo_app_new/presentation/widgets/input_field.dart';
 import 'package:todo_app_new/presentation/widgets/app_snackbar.dart';
 import 'package:todo_app_new/presentation/providers/task_providers.dart';
 
-
 class AddTaskPage extends ConsumerStatefulWidget {
   final Task? task; // nullable task
   const AddTaskPage({super.key, this.task});
@@ -76,7 +75,10 @@ class _AddTaskPageState extends ConsumerState<AddTaskPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(widget.task == null ? "Add Task" : "Edit Task", style: headingStyle),
+              Text(
+                widget.task == null ? "Add Task" : "Edit Task",
+                style: headingStyle,
+              ),
               InputField(
                 title: 'Title',
                 hint: 'Enter title here',
@@ -127,7 +129,8 @@ class _AddTaskPageState extends ConsumerState<AddTaskPage> {
                         widget: Align(
                           alignment: Alignment.centerRight,
                           child: IconButton(
-                            onPressed: () => getTimeFromUser(isStartTime: false),
+                            onPressed: () =>
+                                getTimeFromUser(isStartTime: false),
                             icon: const Icon(Icons.access_time_rounded),
                             color: Colors.grey,
                           ),
@@ -157,10 +160,12 @@ class _AddTaskPageState extends ConsumerState<AddTaskPage> {
                         setState(() => _selectedRemind = newValue!);
                       },
                       items: remindList
-                          .map((value) => DropdownMenuItem(
-                                value: value,
-                                child: Text(value.toString()),
-                              ))
+                          .map(
+                            (value) => DropdownMenuItem(
+                              value: value,
+                              child: Text(value.toString()),
+                            ),
+                          )
                           .toList(),
                     ),
                     const SizedBox(width: 6),
@@ -187,10 +192,12 @@ class _AddTaskPageState extends ConsumerState<AddTaskPage> {
                         setState(() => _selectedRepeat = newValue!);
                       },
                       items: repeatList
-                          .map((repeat) => DropdownMenuItem(
-                                value: repeat,
-                                child: Text(repeat.label),
-                              ))
+                          .map(
+                            (repeat) => DropdownMenuItem(
+                              value: repeat,
+                              child: Text(repeat.label),
+                            ),
+                          )
                           .toList(),
                     ),
                     const SizedBox(width: 6),

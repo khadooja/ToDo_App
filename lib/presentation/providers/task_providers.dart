@@ -4,7 +4,6 @@ import 'package:todo_app_new/domain/repositories/task_repository.dart';
 import 'package:todo_app_new/data/repositories/task_repository_impl.dart';
 import 'package:todo_app_new/data/datasources/task_local_data_source.dart';
 
-
 final taskLocalDataSourceProvider = Provider<TaskLocalDataSource>((ref) {
   return TaskLocalDataSource();
 });

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app_new/domain/entities/task.dart';
+
 /// Data Transfer Object: the shape a Task takes in SQLite. Keeping this
 /// separate from the domain Task means the domain/presentation layers never
 /// need to know about storage encodings (column names, string formats).

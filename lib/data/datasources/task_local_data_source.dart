@@ -1,7 +1,7 @@
 import 'dart:developer' as dev;
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
- 
+
 /// Raw SQLite access, instance-based (unlike the old static `DBHelper`) so
 /// it can be constructed by a Riverpod provider and swapped for a fake data
 /// source in tests without touching global static state.
@@ -11,15 +11,16 @@ class TaskLocalDataSource {
   // database instead of sharing the real on-disk file. Production code
   // never passes this, so real usage is unaffected.
   TaskLocalDataSource({String? databasePath}) : _overridePath = databasePath;
- 
+
   final String? _overridePath;
- 
+
   static const int _version = 2;
   static const String _tableName = 'tasks';
- 
+
   Database? _db;
- 
-  static const String _createTableQuery = '''
+
+  static const String _createTableQuery =
+      '''
     CREATE TABLE $_tableName (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title STRING,
@@ -33,7 +34,7 @@ class TaskLocalDataSource {
       isCompleted INTEGER
     )
   ''';
- 
+
   Future<Database> get _database async {
     if (_db != null) return _db!;
     try {
@@ -60,7 +61,9 @@ class TaskLocalDataSource {
         //   await db.execute('ALTER TABLE $_tableName ADD COLUMN foo TEXT');
         // }
         onUpgrade: (db, oldVersion, newVersion) async {
-          dev.log('DB upgrade from $oldVersion to $newVersion (no-op: schema unchanged)');
+          dev.log(
+            'DB upgrade from $oldVersion to $newVersion (no-op: schema unchanged)',
+          );
         },
       );
       dev.log('✅ Database initialized successfully at: $path');
@@ -70,40 +73,40 @@ class TaskLocalDataSource {
     }
     return _db!;
   }
- 
+
   Future<int> insert(Map<String, dynamic> row) async {
     final db = await _database;
     return db.insert(_tableName, row);
   }
- 
+
   Future<List<Map<String, dynamic>>> queryAll() async {
     final db = await _database;
     return db.query(_tableName);
   }
- 
+
   Future<int> update(int id, Map<String, dynamic> row) async {
     final db = await _database;
     return db.update(_tableName, row, where: 'id = ?', whereArgs: [id]);
   }
- 
+
   Future<int> delete(int id) async {
     final db = await _database;
     return db.delete(_tableName, where: 'id = ?', whereArgs: [id]);
   }
- 
+
   Future<int> deleteAll() async {
     final db = await _database;
     return db.delete(_tableName);
   }
- 
+
   Future<int> updateCompleted(int id) async {
     final db = await _database;
-    return db.rawUpdate(
-      'UPDATE $_tableName SET isCompleted = ? WHERE id = ?',
-      [1, id],
-    );
+    return db.rawUpdate('UPDATE $_tableName SET isCompleted = ? WHERE id = ?', [
+      1,
+      id,
+    ]);
   }
- 
+
   /// Releases the underlying connection. Mainly useful in tests
   /// (tearDown) so each test's in-memory DB doesn't linger.
   Future<void> close() async {
@@ -111,4 +114,3 @@ class TaskLocalDataSource {
     _db = null;
   }
 }
- 

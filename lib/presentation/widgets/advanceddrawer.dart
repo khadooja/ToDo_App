@@ -16,18 +16,15 @@ class AdvancedDrawer extends ConsumerStatefulWidget {
   // NOTE: taskController is no longer accepted here — home_page.dart used
   // to pass its GetX TaskController instance in; this widget now reads
   // taskListProvider directly via `ref`, so there's nothing to pass in.
-  const AdvancedDrawer({
-    super.key,
-    required this.notifyHelper,
-  });
+  const AdvancedDrawer({super.key, required this.notifyHelper});
 
   @override
   ConsumerState<AdvancedDrawer> createState() => _AdvancedDrawerState();
 }
 
 class _AdvancedDrawerState extends ConsumerState<AdvancedDrawer> {
-   bool _notificationsEnabled = true;
-   final _box = GetStorage();
+  bool _notificationsEnabled = true;
+  final _box = GetStorage();
 
   @override
   void initState() {
@@ -37,7 +34,8 @@ class _AdvancedDrawerState extends ConsumerState<AdvancedDrawer> {
 
   void _initNotificationState() async {
     bool storedPreference = _box.read<bool>('notificationsEnabled') ?? true;
-    bool systemAllowed = await widget.notifyHelper.checkNotificationPermission();
+    bool systemAllowed = await widget.notifyHelper
+        .checkNotificationPermission();
     setState(() {
       _notificationsEnabled = storedPreference && systemAllowed;
     });
@@ -51,10 +49,9 @@ class _AdvancedDrawerState extends ConsumerState<AdvancedDrawer> {
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors:
-                Get.isDarkMode
-                    ? [Colors.grey[900]!, Colors.grey[850]!]
-                    : [Colors.white, Colors.grey[100]!],
+            colors: Get.isDarkMode
+                ? [Colors.grey[900]!, Colors.grey[850]!]
+                : [Colors.white, Colors.grey[100]!],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -80,10 +77,7 @@ class _AdvancedDrawerState extends ConsumerState<AdvancedDrawer> {
               onTap: () async {
                 final tasks = ref.read(taskListProvider).value ?? [];
                 if (tasks.isEmpty) {
-                  AppSnackbar.info(
-                    "No Tasks",
-                    "There are no tasks to delete",
-                  );
+                  AppSnackbar.info("No Tasks", "There are no tasks to delete");
                   return;
                 }
 
@@ -196,11 +190,11 @@ class _AdvancedDrawerState extends ConsumerState<AdvancedDrawer> {
                   ),
                   isSwitch
                       ? Switch(
-                        value: value,
-                        // ignore: deprecated_member_use
-                        activeColor: primaryClr,
-                        onChanged: onChanged,
-                      )
+                          value: value,
+                          // ignore: deprecated_member_use
+                          activeColor: primaryClr,
+                          onChanged: onChanged,
+                        )
                       : const SizedBox.shrink(),
                 ],
               ),

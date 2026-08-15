@@ -25,7 +25,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     {
       "image": "assets/images/reminder.svg",
       "title": "Don't forget your reminders",
-      "desc": "Receive notifications at the right time to complete your tasks effectively.",
+      "desc":
+          "Receive notifications at the right time to complete your tasks effectively.",
     },
     {
       "image": "assets/images/time_management.svg",
@@ -164,9 +165,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                   onPressed: _nextPage,
                   child: Text(
-                    currentPage == onboardingData.length - 1
-                        ? "Start"
-                        : "Next",
+                    currentPage == onboardingData.length - 1 ? "Start" : "Next",
                     style: const TextStyle(fontSize: 18, color: Colors.white),
                   ),
                 ),

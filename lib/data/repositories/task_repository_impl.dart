@@ -3,8 +3,6 @@ import 'package:todo_app_new/domain/entities/task.dart';
 import 'package:todo_app_new/domain/repositories/task_repository.dart';
 import 'package:todo_app_new/data/datasources/task_local_data_source.dart';
 
-
-
 class TaskRepositoryImpl implements TaskRepository {
   final TaskLocalDataSource _dataSource;
 
