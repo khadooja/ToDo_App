@@ -1,0 +1,55 @@
+{
+  "@@locale": "ar",
+
+  "myTasks": "مهامي",
+  "addTask": "إضافة مهمة",
+  "editTask": "تعديل المهمة",
+
+  "noTasksYetTitle": "لا توجد لديك أي مهام بعد!",
+  "noTasksYetSubtitle": "اضغط على زر + لإضافة مهمة جديدة",
+
+  "noTasksForDateTitle": "لا توجد مهام في هذا التاريخ.",
+  "noTasksForDateSubtitle": "جرّب يومًا آخر أو أضف مهمة جديدة",
+
+  "deleteAllTasksTitle": "حذف جميع المهام",
+  "deleteAllTasksConfirm": "هل أنت متأكد أنك تريد حذف جميع المهام؟",
+
+  "deleteTaskTitle": "حذف المهمة",
+  "deleteTaskConfirm": "هل أنت متأكد أنك تريد حذف هذه المهمة؟",
+
+  "cancel": "إلغاء",
+  "delete": "حذف",
+  "close": "إغلاق",
+
+  "titleField": "العنوان",
+  "noteField": "ملاحظة",
+  "dateField": "التاريخ",
+  "startTimeField": "وقت البدء",
+  "endTimeField": "وقت الانتهاء",
+  "remindField": "تذكير",
+  "repeatField": "التكرار",
+  "colorField": "اللون",
+
+  "createTaskButton": "إنشاء مهمة",
+  "updateTaskButton": "تحديث المهمة",
+
+  "requiredFieldsTitle": "مطلوب",
+  "requiredFieldsMessage": "جميع الحقول مطلوبة!",
+
+  "taskUpdatedTitle": "تم تحديث المهمة",
+  "taskUpdatedMessage": "تم تحديث المهمة بنجاح!",
+
+  "darkModeLabel": "الوضع الداكن",
+  "notificationsLabel": "الإشعارات",
+  "todoOptionsHeader": "خيارات المهام",
+
+  "greetingMorning": "صباح الخير",
+  "greetingAfternoon": "مساء الخير",
+  "greetingEvening": "مساء الخير",
+
+  "sectionMorning": "الصباح",
+  "sectionAfternoon": "بعد الظهر",
+  "sectionEvening": "المساء",
+
+  "taskCountLabel": "{count, plural, =0{لا توجد مهام} =1{مهمة واحدة} other{{count} مهام}}"
+}
