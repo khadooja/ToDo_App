@@ -24,6 +24,7 @@ class AppColors {
   // just also exposed as soft "tint" backgrounds for card surfaces instead
   // of the old full-bleed saturated fill.
   static Color taskTint(Color base, bool isDark) {
+    // ignore: deprecated_member_use
     return isDark ? base.withOpacity(0.18) : base.withOpacity(0.10);
   }
 

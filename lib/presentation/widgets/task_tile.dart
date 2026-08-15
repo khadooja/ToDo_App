@@ -8,6 +8,8 @@ import 'package:todo_app_new/core/Theme/text_styles.dart';
 import 'package:todo_app_new/core/Theme/app_spacing.dart';
 import 'package:todo_app_new/presentation/pages/add_task_page.dart';
 import 'package:todo_app_new/presentation/providers/task_providers.dart';
+// ignore_for_file: deprecated_member_use
+
 
 /// A single task card.
 ///

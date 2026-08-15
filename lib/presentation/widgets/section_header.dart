@@ -24,7 +24,7 @@ class SectionHeader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(title.toUpperCase(), style: sectionHeaderStyle),
-          if (trailing != null) trailing!,
+          ?trailing,
         ],
       ),
     );

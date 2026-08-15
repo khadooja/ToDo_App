@@ -17,7 +17,7 @@ import 'package:todo_app_new/core/Theme/text_styles.dart';
 import 'package:todo_app_new/core/Theme/app_spacing.dart';
 import 'package:todo_app_new/l10n/app_localizations.dart';
 import 'package:todo_app_new/core/services/notification_services.dart';
-import 'package:todo_app_new/presentation/widgets/advancedDrawer.dart';
+import 'package:todo_app_new/presentation/widgets/advanceddrawer.dart';
 import 'package:todo_app_new/presentation/providers/task_providers.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
@@ -242,6 +242,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
+                  // ignore: deprecated_member_use
                   color: primaryClr.withOpacity(isDark ? 0.22 : 0.1),
                   borderRadius: BorderRadius.circular(AppRadius.pill),
                 ),
