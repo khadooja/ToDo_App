@@ -10,7 +10,6 @@ import 'package:todo_app_new/presentation/pages/add_task_page.dart';
 import 'package:todo_app_new/presentation/providers/task_providers.dart';
 // ignore_for_file: deprecated_member_use
 
-
 /// A single task card.
 ///
 /// UI/UX polish pass: the previous version filled the whole card with a
